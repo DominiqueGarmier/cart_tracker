@@ -83,14 +83,17 @@ class Data:
     
     def __init__(self, file_path):
         self._file_path = file_path
-        self._df = pd.DataFrame()
+        self._df = pd.DataFrame(data={
+            'a':[],
+            'b':[]
+        })
     
     def pull(self):
         '''
         updates pandas df by pulling from xlsx file
         '''
         if os.path.exists(self._file_path):
-            self._df = pd.read_csv(file_path)
+            self._df = pd.read_csv(self._file_path)
 
     def push(self):
         '''
@@ -102,4 +105,8 @@ class Data:
         '''
         edits contents of df
         '''
-        pass
+        df2 = pd.DataFrame({
+            'a': [1,2,3],
+            'b': [1,2,3]
+        })
+        self._df.append(df2, "\n")

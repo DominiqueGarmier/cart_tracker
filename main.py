@@ -19,5 +19,6 @@ if __name__ == '__main__':
     #handler.print_recent_entries()
 
     data.pull()
+    data.edit()
     data.push()
     
