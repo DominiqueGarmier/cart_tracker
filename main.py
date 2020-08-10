@@ -1,16 +1,23 @@
 # Standardlibarary imports
 
 # local imports
-from classes import IOHandler
+from classes import IOHandler, Data
 
 # 3rd party imports
 import pandas
 import matplotlib.pyplot as plt
 
-handler = IOHandler()
+file_path = './test.csv'
+
+data = Data(file_path)
+handler = IOHandler(data)
+
 
 if __name__ == '__main__':
-    handler.ask_for_input()
-    handler.process_input()
-    handler.print_recent_entries()
+    #handler.ask_for_input()
+    #handler.process_input()
+    #handler.print_recent_entries()
+
+    data.pull()
+    data.push()
     

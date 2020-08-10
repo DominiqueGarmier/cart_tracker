@@ -1,5 +1,6 @@
 # Standardlibarary imports
 import re
+import os
 
 # local imports
 
@@ -82,20 +83,23 @@ class Data:
     
     def __init__(self, file_path):
         self._file_path = file_path
+        self._df = pd.DataFrame()
     
     def pull(self):
         '''
         updates pandas df by pulling from xlsx file
         '''
-        pass
+        if os.path.exists(self._file_path):
+            self._df = pd.read_csv(file_path)
 
     def push(self):
         '''
         saves pandas df as xlsx file
         '''
-        pass
+        self._df.to_csv(self._file_path)
 
     def edit(self):
         '''
         edits contents of df
         '''
+        pass
