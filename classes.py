@@ -2,7 +2,6 @@
 import re
 import os
 import datetime
-import tikinter as tk
 
 # local imports
 
@@ -28,13 +27,20 @@ class IOHandler:
         retruns: None
 
         asks for cart numbers and signature
-        trows errors if you none are given
+        trows errors if none are given
 
         stores input as class variable of self.cache
         '''
 
-        self._cache.raw_numbers = input("\n -> Welche(r) Wagen haben Sie beladen?\n")
+        self._cache.raw_numbers = input("\n -> Welche(n) Wagen haben Sie beladen?\n")
         self._cache.raw_signature = input("\n -> Was sind Ihre Initialen?\n")
+
+    def grab_input(self, raw_numbers, raw_signature):
+        '''
+        grabs inputs directrly from args
+        '''
+        self._cache.raw_numbers = raw_numbers
+        self._cache.raw_signature = raw_signature
 
     def process_input(self):
         '''
@@ -53,8 +59,9 @@ class IOHandler:
 
         recent_entries = []
         for cart_number in cart_numbers:
-            _ = Entry(cart_number=cart_number, state='done', signatrue=signatrue)
-            recent_entries.append(_)
+            if cart_number:
+                _ = Entry(cart_number=cart_number, state='done', signatrue=signatrue)
+                recent_entries.append(_)
 
         self._cache.recent_entries = recent_entries
     
@@ -103,7 +110,7 @@ class Data:
         '''
         updates pandas df by pulling from xlsx file
         '''
-        if os.path.exists(self._file_path):
+        if os.path.exists(self._file_path) and os.stat(self._file_path).st_size > 0:
             self._df = pd.read_csv(self._file_path)
 
     def push(self):

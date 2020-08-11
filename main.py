@@ -4,6 +4,7 @@ import configparser
 
 # local imports
 from classes import IOHandler, Data
+import gui
 
 # 3rd party imports
 
@@ -25,12 +26,7 @@ data_path = config['DEFAULT']['data_path']
 debug = config.getboolean('DEFAULT', 'debug')
 handler = IOHandler(data_path)
 
+window = gui.Window(handler, debug)
 
 if __name__ == '__main__':
-    handler.ask_for_input()
-    handler.process_input()
-
-    if debug:
-        handler.print_recent_entries()
-
-    handler.save_recent_entries()
+    window.mainloop()
