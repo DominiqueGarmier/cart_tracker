@@ -7,7 +7,7 @@ from classes import IOHandler, Data
 import pandas
 import matplotlib.pyplot as plt
 
-file_path = './test.csv'
+file_path = './data.csv' # path to csv file on NAS
 
 data = Data(file_path)
 handler = IOHandler(data)

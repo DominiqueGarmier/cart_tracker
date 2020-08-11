@@ -84,8 +84,8 @@ class Data:
     def __init__(self, file_path):
         self._file_path = file_path
         self._df = pd.DataFrame(data={
-            'a':[],
-            'b':[]
+            'signatures':[],
+            'cart_numbers':[]
         })
     
     def pull(self):
@@ -105,8 +105,9 @@ class Data:
         '''
         edits contents of df
         '''
-        df2 = pd.DataFrame({
-            'a': [1,2,3],
-            'b': [1,2,3]
+        new_entries = pd.DataFrame(data={
+            'signatues':[],
+            'cart_numbers':[]
         })
-        self._df.append(df2, "\n")
+        
+        self._df = self._df.append(new_entries, ignore_index=True)
