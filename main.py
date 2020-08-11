@@ -22,7 +22,7 @@ else:
         config.write(configfile)
 
 data_path = config['DEFAULT']['data_path']
-debug = config['DEFAULT']['debug'] 
+debug = config.getboolean('DEFAULT', 'debug')
 handler = IOHandler(data_path)
 
 
@@ -32,5 +32,5 @@ if __name__ == '__main__':
 
     if debug:
         handler.print_recent_entries()
-        
+
     handler.save_recent_entries()

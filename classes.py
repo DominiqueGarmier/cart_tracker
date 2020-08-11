@@ -1,6 +1,7 @@
 # Standardlibarary imports
 import re
 import os
+import datetime
 
 # local imports
 
@@ -74,7 +75,8 @@ class Entry:
         '''
         self._cart_number = cart_number # string
         self._state = state             # string: "done" or "pending" #TODO use bool?
-        self._signature = signatrue       # string
+        self._signature = signatrue     # string
+        self._timestamp = str(datetime.datetime.now())
 
     def __str__(self):
         '''
@@ -82,7 +84,8 @@ class Entry:
         '''
         _ = 'Cart Number: ' + str(self._cart_number) + ' | '
         _ += 'State: ' + str(self._state) + ' | '
-        _ += 'Signature: ' + str(self._signature) + '\n'
+        _ += 'Signature: ' + str(self._signature) + ' | '
+        _ += 'Timestamp: ' + self._timestamp + '\n'
         return _
 
 class Data:
@@ -92,7 +95,8 @@ class Data:
         self._df = pd.DataFrame(data={
             'cart_number':[],
             'state':[],
-            'signature':[]
+            'signature':[],
+            'timestamp':[]
         })
     
     def pull(self):
@@ -115,7 +119,8 @@ class Data:
         new_entries = pd.DataFrame(data={
             'cart_number':[entry._cart_number for entry in new_entries],
             'state':[entry._state for entry in new_entries],
-            'signature':[entry._signature for entry in new_entries]
+            'signature':[entry._signature for entry in new_entries],
+            'timestamp':[entry._timestamp for entry in new_entries]
         })
         
         self._df = self._df.append(new_entries, ignore_index=True)
