@@ -2,12 +2,12 @@
 import re
 import os
 import datetime
+import tikinter as tk
 
 # local imports
 
 # 3rd party imports
 import pandas as pd
-import matplotlib.pyplot as plt
 
 class IOCache:
     def __init__(self):
