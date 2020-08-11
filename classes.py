@@ -16,9 +16,9 @@ class IOCache:
 
 class IOHandler:
     
-    def __init__(self, data):
+    def __init__(self, data_path):
         self._cache = IOCache()
-        self._data = data
+        self._data = Data(data_path)
 
     def ask_for_input(self):
         '''
@@ -56,11 +56,17 @@ class IOHandler:
             recent_entries.append(_)
 
         self._cache.recent_entries = recent_entries
+    
 
     def print_recent_entries(self):
         for entry in self._cache.recent_entries:
-            entry.print_entry()
+            print(entry)
 
+    def save_recent_entries(self):
+        self._data.pull()
+        self._data.edit(self._cache.recent_entries)
+        self._data.push()
+        
 class Entry:
 
     def __init__(self, cart_number=None, state=None, signatrue=None):
@@ -70,22 +76,23 @@ class Entry:
         self._state = state             # string: "done" or "pending" #TODO use bool?
         self._signature = signatrue       # string
 
-    def print_entry(self):
+    def __str__(self):
         '''
-        only for debug
+        defines str() method on Entry object
         '''
-        print('Cart Number: ', self._cart_number, end=' | ')
-        print('State: ', self._state, end=' | ')
-        print('Signature: ', self._signature, end='\n')
-
+        _ = 'Cart Number: ' + str(self._cart_number) + ' | '
+        _ += 'State: ' + str(self._state) + ' | '
+        _ += 'Signature: ' + str(self._signature) + '\n'
+        return _
 
 class Data:
     
     def __init__(self, file_path):
         self._file_path = file_path
         self._df = pd.DataFrame(data={
-            'signatures':[],
-            'cart_numbers':[]
+            'cart_number':[],
+            'state':[],
+            'signature':[]
         })
     
     def pull(self):
@@ -99,15 +106,16 @@ class Data:
         '''
         saves pandas df as xlsx file
         '''
-        self._df.to_csv(self._file_path)
+        self._df.to_csv(self._file_path, index=False)
 
-    def edit(self):
+    def edit(self, new_entries):
         '''
         edits contents of df
         '''
         new_entries = pd.DataFrame(data={
-            'signatues':[],
-            'cart_numbers':[]
+            'cart_number':[entry._cart_number for entry in new_entries],
+            'state':[entry._state for entry in new_entries],
+            'signature':[entry._signature for entry in new_entries]
         })
         
         self._df = self._df.append(new_entries, ignore_index=True)

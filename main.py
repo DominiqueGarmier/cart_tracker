@@ -1,24 +1,36 @@
 # Standardlibarary imports
+import os
+import configparser
 
 # local imports
 from classes import IOHandler, Data
 
 # 3rd party imports
-import pandas
-import matplotlib.pyplot as plt
 
-file_path = './data.csv' # path to csv file on NAS
+config_path = './config.ini'
+config = configparser.ConfigParser()
 
-data = Data(file_path)
-handler = IOHandler(data)
+if os.path.isfile(config_path):
+    config.read(config_path)
+
+else:
+    config['DEFAULT'] = {
+        'data_path': './data.csv', # path to csv file on NAS
+        'debug': False
+    }
+    with open(config_path, 'w') as configfile:
+        config.write(configfile)
+
+data_path = config['DEFAULT']['data_path']
+debug = config['DEFAULT']['debug'] 
+handler = IOHandler(data_path)
 
 
 if __name__ == '__main__':
-    #handler.ask_for_input()
-    #handler.process_input()
-    #handler.print_recent_entries()
+    handler.ask_for_input()
+    handler.process_input()
 
-    data.pull()
-    data.edit()
-    data.push()
-    
+    if debug:
+        handler.print_recent_entries()
+        
+    handler.save_recent_entries()
