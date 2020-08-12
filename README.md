@@ -11,7 +11,7 @@ This only works for Microsoft Windows environments. Minor tweaks could be made t
 namely replacing all the .bat and .vbs files with their respective counterparts.
 
 Python 3.8 or later needs to be installed and added to Path, check the .bat files to make sure they work for your system.
-This means perhaps changing "python" to "python3" or even "<my/path/to/python>".
+This means perhaps changing <python> to <python3> or even <my/path/to/python>.
 
 Next the [requirements.txt](./requirements.txt) needs to be installed.
 
