@@ -26,7 +26,7 @@ data_path = config['DEFAULT']['data_path']
 debug = config.getboolean('DEFAULT', 'debug')
 handler = IOHandler(data_path)
 
-window = gui.Window(handler, debug)
 
 if __name__ == '__main__':
+    window = gui.Window(handler, debug)
     window.mainloop()

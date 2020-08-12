@@ -1,0 +1,1 @@
+pythonw delete_data.py

@@ -22,7 +22,7 @@ class IOHandler:
 
     def ask_for_input(self):
         '''
-        args: None,
+        args: None,b
 
         retruns: None
 
@@ -57,20 +57,29 @@ class IOHandler:
         # process signatue
         signatrue = self._cache.raw_signature
 
+        # creates Entry objects for all new entries
         recent_entries = []
         for cart_number in cart_numbers:
             if cart_number:
                 _ = Entry(cart_number=cart_number, state='done', signatrue=signatrue)
                 recent_entries.append(_)
 
+        # stores all new entries
         self._cache.recent_entries = recent_entries
     
 
     def print_recent_entries(self):
+        '''
+        prints out all new entries for debugging
+        '''
         for entry in self._cache.recent_entries:
             print(entry)
 
     def save_recent_entries(self):
+        '''
+        pulls edits and pushes database to add new entries
+        '''
+        
         self._data.pull()
         self._data.edit(self._cache.recent_entries)
         self._data.push()
@@ -79,11 +88,12 @@ class Entry:
 
     def __init__(self, cart_number=None, state=None, signatrue=None):
         '''
+        Creats Entry Object
         '''
         self._cart_number = cart_number # string
         self._state = state             # string: "done" or "pending" #TODO use bool?
         self._signature = signatrue     # string
-        self._timestamp = str(datetime.datetime.now())
+        self._timestamp = str(datetime.datetime.now()) # timestamp to see when a cart was completed
 
     def __str__(self):
         '''
@@ -98,6 +108,9 @@ class Entry:
 class Data:
     
     def __init__(self, file_path):
+        '''
+        creates Data object mirroring the csv files contents.
+        '''
         self._file_path = file_path
         self._df = pd.DataFrame(data={
             'cart_number':[],
@@ -108,20 +121,20 @@ class Data:
     
     def pull(self):
         '''
-        updates pandas df by pulling from xlsx file
+        updates pandas df by pulling from csv file
         '''
         if os.path.exists(self._file_path) and os.stat(self._file_path).st_size > 0:
             self._df = pd.read_csv(self._file_path)
 
     def push(self):
         '''
-        saves pandas df as xlsx file
+        saves pandas df as csv file
         '''
         self._df.to_csv(self._file_path, index=False)
 
     def edit(self, new_entries):
         '''
-        edits contents of df
+        edits contents of df, to append new entries
         '''
         new_entries = pd.DataFrame(data={
             'cart_number':[entry._cart_number for entry in new_entries],
