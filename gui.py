@@ -50,13 +50,17 @@ class Window:
         self._window.title("KSA Wäscheversorgung")
         self._window.iconbitmap('./src/_.ico') # ksa logo
 
+        # menu button
+        self._correct_button = tk.Button(self._window, text='Korrektur', command=self.goto_correct)
+        self._correct_button.grid(column=0, row=0, sticky=tk.NW)
+
         # create first label
         self._label1 = tk.Label(self._window, text="Welche(n) Wagen haben Sie beladen?", font=self._font)
-        self._label1.grid(column=0, row=0, pady=10, columnspan=8)
+        self._label1.grid(column=0, row=0, pady=10, columnspan=1)
 
         # create 2nd entry: for the signature
         self._text2 = tk.Entry(self._window, width=80, font=self._font)
-        self._text2.grid(column=0, row=3, pady=10, columnspan=8)
+        self._text2.grid(column=0, row=3, pady=10, columnspan=1)
 
         # change focus function using return
         def focus_shift_1(event):
@@ -64,16 +68,16 @@ class Window:
 
         # create 1st entry (autocomplete entry): for the cart numbers
         self._text1 = AutocompleteEntry(self._autocomplete_list, leave_func=focus_shift_1, width=80, font=self._font)
-        self._text1.grid(column=0, row=1, pady=10, columnspan=8)
+        self._text1.grid(column=0, row=1, pady=10, columnspan=1)
         self._text1.focus_set()
 
         # create 2nd label
         self._label2 = tk.Label(self._window, text="Was sind Ihre Initialen?", font=self._font)
-        self._label2.grid(column=0, row=2, pady=10, columnspan=8)
+        self._label2.grid(column=0, row=2, pady=10, columnspan=1)
 
         # create save button
         self._button = tk.Button(self._window, text="Speichern!", font=self._font, command=self.on_click)
-        self._button.grid(column=0, row=4, pady=10, columnspan=8)
+        self._button.grid(column=0, row=4, pady=10, columnspan=1)
 
         # change focus function using return
         def focus_shift_2(event):
@@ -86,12 +90,14 @@ class Window:
         self._button.bind('<Return>', focus_shift_3)
 
         # clickable label to open cart_names.txt
-        self._small_button = tk.Label(self._window, text=r"neue Wagennummern regisitrieren", fg="black", cursor="hand2", font=("Calibri", 12, "underline"), anchor=tk.W)
-        self._small_button.grid(column=7, row=5)
+        self._small_button = tk.Label(self._window, text=r"neue Wagennummern regisitrieren", fg="black", cursor="hand2", font=("Calibri", 12, "underline"))
+        self._small_button.grid(column=0, row=4, sticky=tk.SE)
 
-        # open cart_names.txt
+        # open cart_names.txt and close window
         def open_file(event):
             os.startfile(os.path.abspath(cart_names_path))
+            self._window.destroy()
+
         self._small_button.bind("<Button-1>", open_file)
 
     def mainloop(self):
@@ -99,6 +105,34 @@ class Window:
         Displays the window and starts listening for events
         '''
         self._window.mainloop()
+
+    def goto_correct(self):
+        '''
+        changes to remove entry view
+        with one entry field, one confirm button
+        and different autocomplete
+        '''
+
+        # hide menu button
+        self._correct_button.grid_forget()
+
+        new_autocomplete_list = ['test','test','test']
+        
+        # change autocomplete keywords and number of entries shown at once to not overflow the window
+        self._text1.change_autocomplete_list(new_autocomplete_list)
+        self._text1.listboxLength = 2
+
+        # hide other entry
+        self._text2.grid_forget()
+
+        # change label text
+        self._label1['text'] = 'Welcher Eintrag soll gelöscht werden?'
+
+        # hide 2nd label
+        self._label2.grid_forget()
+
+        # bind new function to button
+
 
     def on_click(self):
         '''
@@ -192,6 +226,12 @@ class AutocompleteEntry(tk.Entry):
         self.bind("<Down>", self.moveDown)
         
         self.listboxUp = False
+
+    def change_autocomplete_list(self, autocomplete_list):
+        '''
+        to change keywords proposed by the autocomplete
+        '''
+        self.autocompleteList = autocomplete_list
 
     def changed(self, name, index, mode):
         '''
