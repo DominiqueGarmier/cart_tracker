@@ -17,6 +17,8 @@ import os
 import tkinter as tk
 from tkinter import messagebox
 
+from classes import IOHandler
+
 class Window:
     '''
     Class for the GUI of the cart tracker
@@ -33,8 +35,10 @@ class Window:
         self._lfont = ("Calibri", 24, "bold")
         self._sfont = ("Calibri", 12)
         self._ulfont = ("Calibri", 12, "underline")
-        self._io_handler = io_handler
         self._debug = debug
+
+        # io handler
+        self._io_handler = io_handler
 
         # define menu buttons
         self._to_correct = tk.Button(self._root, text='Korrektur', command=self.display_correct, font=self._sfont)
@@ -44,17 +48,20 @@ class Window:
         # define labels
         self._main_label_top = tk.Label(self._root, text='Welche(n) Wagen haben Sie beladen?', font=self._lfont)
         self._main_label_bottom = tk.Label(self._root, text='Was sind Ihre Initialen?', font=self._lfont)
-        self._correction_label = tk.Label(self._root, text='Welcher Eintrag soll gelöst werden?', font=self._lfont)
+        self._correction_label = tk.Label(self._root, text='Welche(r) Wagen soll aus den erledigten entfernt werden?', font=self._lfont)
 
 
         # define regular entries
         self._signature_textbox_main = tk.Entry(self._root, width=80, font=self._lfont)
         
         # save buttons
-        self._main_save_button = tk.Button(text='Speichern', font=self._lfont)
-        self._correct_save_button = tk.Button(text='Speichern', font=self._lfont)
+        self._main_save_button = tk.Button(text='Speichern', command=self.main_button_click, font=self._lfont)
+        self._correct_save_button = tk.Button(text='Speichern', command=self.correct_button_click, font=self._lfont)
+        
+        # register new carts button   
+        self._new_carts_button = tk.Label(self._root, text='neue Wagennummern registrieren', font=self._ulfont, cursor="hand2")
 
-        # focus transfer functions
+        # focus transfer functions and focus relevant functions
         def focus_to_signature_textbox(event):
             self._signature_textbox_main.focus_set()
 
@@ -63,19 +70,41 @@ class Window:
 
         def focus_to_correct_save_button(event):
             self._correct_save_button.focus_set()
+        
+        def focus_main_button_click(event):
+            self.main_button_click()
+
+        def focus_correct_button_click(event):
+            self.correct_button_click()
+
+        def new_carts_button_click(event):
+            os.startfile(os.path.abspath('./cart_names.txt'))
+            self._root.destroy() # TODO
 
         # define autocomplete entries
-        test = ['test','test','test','test','test']
-        self._autocomplete_textbox_main = AutocompleteEntry(test, leave_func=focus_to_signature_textbox, width=80, font=self._lfont, listboxLength=4)
-        self._autocomplete_textbox_correct = AutocompleteEntry(test, leave_func=focus_to_correct_save_button, width=80, font=self._lfont, listboxLength=2)
+        self._autocomplete_textbox_main = AutocompleteEntry(leave_func=focus_to_signature_textbox, width=80, font=self._lfont, listboxLength=4)
+        self._autocomplete_textbox_correct = AutocompleteEntry(leave_func=focus_to_correct_save_button, width=80, font=self._lfont, listboxLength=2)
 
-        # register new carts button
-        self._new_carts_button = tk.Label(self._root, text='neue Wagennummern registrieren', font=self._ulfont, cursor="hand2")
+        # bind focus related functions to inputs
+        self._signature_textbox_main.bind('<Return>', focus_to_main_save_button)
+        self._main_save_button.bind('<Return>', focus_main_button_click)
+        self._correct_save_button.bind('<Return>', focus_correct_button_click)
+        self._new_carts_button.bind("<Button-1>", new_carts_button_click)
 
     def main_loop(self):
         '''
         Display the window and display the main page
         '''
+
+        with open('./cart_names.txt') as cart_names:
+            possible_carts = cart_names.read().splitlines()
+
+        self._io_handler._data.pull()
+        entered_carts = self._io_handler._data._df.get('cart_number').to_list()[1:]
+
+        self._autocomplete_textbox_main.set_autocomplete_list(possible_carts)
+        self._autocomplete_textbox_correct.set_autocomplete_list(entered_carts)
+
         self.display_main()
         self._root.mainloop()
 
@@ -91,6 +120,7 @@ class Window:
 
         # autocomplete entry
         self._autocomplete_textbox_main.grid(column=0, row=1)
+        self._autocomplete_textbox_main.focus_set()
 
         # regular entry
         self._signature_textbox_main.grid(column=0, row=3)
@@ -113,6 +143,7 @@ class Window:
 
         # autocomplete entry
         self._autocomplete_textbox_correct.grid(column=0, row=1)
+        self._autocomplete_textbox_correct.focus_set()
 
         # save button
         self._correct_save_button.grid(column=0, row=2, pady=5)
@@ -123,6 +154,58 @@ class Window:
     def clear_display(self):
         for element in self._root.grid_slaves():
             element.grid_forget()
+
+    def main_button_click(self):
+        cart_numbers = self._autocomplete_textbox_main.get()
+        signature = self._signature_textbox_main.get()
+
+        if not cart_numbers or not signature:
+            messagebox.showwarning("Warnung", "Es wurden nicht alle Felder ausgefüllt!")
+
+        else:
+            answer = messagebox.askokcancel("Frage", "Der/Die Wagen: " + cart_numbers +" als erledigt Speichern?")
+
+            if answer:
+                self._io_handler.grab_input(cart_numbers, signature)
+                self._io_handler.process_input()
+
+                # prints out new entries if debug=True
+                if self._debug:
+                    self._io_handler.print_recent_entries()
+
+                self._io_handler.save_recent_entries()
+
+                self._root.destroy()
+            
+            else:
+                pass
+
+    def correct_button_click(self):
+        cart_numbers_to_delete = self._autocomplete_textbox_correct.get()
+        # TODO split with commas and semicolons
+
+        if not cart_numbers_to_delete:
+            messagebox.showwarning("Warnung", "Das Feld wurde nicht ausgefüllt!")
+
+        else:
+            answer = messagebox.askokcancel("Frage", "Der/Die Wagen: " + cart_numbers_to_delete +" aus den erledigten Wagen entfernen?")
+
+            if answer:
+                self._io_handler._data.pull()
+                df = self._io_handler._data._df
+
+                cart_numbers = df.get('cart_number').to_list()
+
+                indecies_to_delete = []
+                for cart_number_to_delete in cart_numbers_to_delete:
+                    if cart_number_to_delete in cart_numbers:
+                        indecies_to_delete.append(cart_numbers.index(cart_number_to_delete))
+
+                print(indecies_to_delete)
+                self._root.destroy()
+            
+            else:
+                pass
 
 
 
@@ -137,7 +220,7 @@ class AutocompleteEntry(tk.Entry):
 
     create dropdown list of possible autocompletes, use arrow keys to navigate up and down, return to select
     '''
-    def __init__(self, autocompleteList, leave_func, *args, **kwargs):
+    def __init__(self, leave_func, *args, **kwargs):
         '''
         creates the widget,
 
@@ -166,7 +249,6 @@ class AutocompleteEntry(tk.Entry):
         tk.Entry.__init__(self, *args, **kwargs)
         self.focus()
 
-        self.autocompleteList = autocompleteList
         self.leave_func = leave_func
         
         self.var = self["textvariable"]
@@ -182,7 +264,7 @@ class AutocompleteEntry(tk.Entry):
         
         self.listboxUp = False
 
-    def change_autocomplete_list(self, autocomplete_list):
+    def set_autocomplete_list(self, autocomplete_list):
         '''
         to change keywords proposed by the autocomplete
         '''
@@ -307,5 +389,7 @@ class AutocompleteEntry(tk.Entry):
 
         super().grid_forget()
 
-w = Window(None)
+
+h = IOHandler('./data.csv')
+w = Window(h)
 w.main_loop()
