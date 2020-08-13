@@ -1,4 +1,5 @@
 # cart_tracker
+by Dominique Garmier (c) 2020
 
 App developed for the Kantonsspital Aarau, to track the status of laundry carts.
 
@@ -20,3 +21,11 @@ Inside the [config.ini](./config.ini) file, the Path to the aformentionted CSV f
 For this specific usecase we want the CSV file to be cleared every morning, which is why we have to setup a scheduled task to execute the [delete_data.bat](./delete_data.bat) file every day.
 
 You can now create a shortcut to the [cart_tracker.vbs](./cart_tracker.vbs), which can be used to register new carts that are "done".
+
+## How to use.
+
+Click the shortcut you created, a window will pop up prompting you to enter one or more cart numbers separated by commas. An autocomplete dropdown menu will help you type the cartnames correctly. Use the Arrow and Return Keys to navigate.
+
+The second textfield asks you to provide a signature, type something like the first letters for your first and last name. It's to later on identify who loaded that cart.
+
+After hitting return again you will be asked to confirm your entries. If you do so they will be saved in a specified CSV file where they can be read in real time by an Excel spreadsheet.

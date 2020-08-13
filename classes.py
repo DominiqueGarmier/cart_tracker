@@ -1,3 +1,13 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+#-------------------------------------------------------
+# cart tracker (c) 2020 Dominique F. Garmier MIT licence
+#-------------------------------------------------------
+
+'''
+most important classes
+'''
+
 # Standardlibarary imports
 import re
 import os
@@ -52,7 +62,8 @@ class IOHandler:
         '''
 
         # process cart_numbers
-        cart_numbers = re.split(',|, |;|; ', self._cache.raw_numbers)
+        cart_numbers = re.split(',|;', self._cache.raw_numbers)
+        cart_numbers = [cart_number.strip() for cart_number in cart_numbers]
 
         # process signatue
         signatrue = self._cache.raw_signature
@@ -89,6 +100,11 @@ class Entry:
     def __init__(self, cart_number=None, state=None, signatrue=None):
         '''
         Creats Entry Object
+
+        cart_number: the number of the cart
+        state: the state of said cart: i.e. "done"
+        signature: signature of the person who loaded that cart
+        timestamp: time when the entry was registereds
         '''
         self._cart_number = cart_number # string
         self._state = state             # string: "done" or "pending" #TODO use bool?
@@ -111,17 +127,21 @@ class Data:
         '''
         creates Data object mirroring the csv files contents.
         '''
+
+        # create default file in case pull doesnt return anything
         self._file_path = file_path
         self._df = pd.DataFrame(data={
-            'cart_number':[],
-            'state':[],
-            'signature':[],
-            'timestamp':[]
+            'cart_number':['-'],
+            'state':['-'],
+            'signature':['-'],
+            'timestamp':['-']
         })
     
     def pull(self):
         '''
         updates pandas df by pulling from csv file
+
+        only pulls if cvs file exists and isnt empty
         '''
         if os.path.exists(self._file_path) and os.stat(self._file_path).st_size > 0:
             self._df = pd.read_csv(self._file_path)
@@ -129,6 +149,8 @@ class Data:
     def push(self):
         '''
         saves pandas df as csv file
+
+        creates the file if it doesnt exist already
         '''
         self._df.to_csv(self._file_path, index=False)
 

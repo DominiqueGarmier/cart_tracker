@@ -1,1 +1,1 @@
-pythonw delete_data.py
+powershell -command "cd %~dp0/; python delete_data.py"
