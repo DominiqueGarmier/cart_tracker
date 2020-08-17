@@ -65,9 +65,9 @@ class Window:
         
         # register new carts button   
         self._new_carts_button = tk.Label(self._root, text='neue Wagennummern registrieren', font=self._ulfont, cursor="hand2")
-
+ 
         # copyright button
-        self._copyright_label = tk.Label(self._root, text='copyright (c) Dominique Garmier 2020', font=self._sfont)
+        self._copyright_label = tk.Label(self._root) #, text='Copyright (c) Dominique Garmier 2020', font=self._sfont)
 
         # focus transfer functions and focus relevant functions
         def focus_to_signature_textbox(event):
@@ -368,7 +368,7 @@ class AutocompleteEntry(tk.Entry):
             # add spaces after commas
             new_words = ''
             for word in  curr_words:
-                if word in self.autocompleteList:
+                if word in self.autocompleteList and word:
                     new_words += word + ', '
 
             new_words += self.listbox.get(tk.ACTIVE)
@@ -383,7 +383,7 @@ class AutocompleteEntry(tk.Entry):
 
             new_words = ''
             for word in  curr_words:
-                if word in self.autocompleteList:
+                if word in self.autocompleteList and word:
                     new_words += word + ', '
 
             self.var.set(new_words[:-2])
