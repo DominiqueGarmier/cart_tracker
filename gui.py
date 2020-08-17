@@ -30,7 +30,7 @@ class Window:
         initializes all the displayable objects, doesnt display them yet
         and defines all the focus transfer functions
         '''
-
+        
         # define root
         self._root = tk.Tk()
         self._root.title('KSA Wäscheversorgung - Wagen Tracker')
