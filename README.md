@@ -1,5 +1,5 @@
 # cart_tracker
-by Dominique Garmier (c) 2020
+by [Dominique Garmier](github.com/dominiquegarmier) (c) 2020
 
 App developed for the Kantonsspital Aarau, to track the status of laundry carts.
 
@@ -24,8 +24,10 @@ You can now create a shortcut to the [cart_tracker.vbs](./cart_tracker.vbs), whi
 
 ## How to use.
 
-Click the shortcut you created, a window will pop up prompting you to enter one or more cart numbers separated by commas. An autocomplete dropdown menu will help you type the cartnames correctly. Use the Arrow and Return Keys to navigate.
+Click the shortcut you created, a window will pop up prompting you to enter one or more cart numbers separated by commas. An autocomplete dropdown menu will help you type the cartnames correctly. Use the Arrow and Return keys to navigate.
 
 The second textfield asks you to provide a signature, type something like the first letters for your first and last name. It's to later on identify who loaded that cart.
 
 After hitting return again you will be asked to confirm your entries. If you do so they will be saved in a specified CSV file where they can be read in real time by an Excel spreadsheet.
+
+If you messed up and want to remove an entry you falsely entered, you can hit the "Korrektur" Button at the top left. This will open a new Page where you only have to enter the cart name you want to remove. This Textfield also has an autocomplete feature, only autocompleting to cartnames already in the entries. After hitting enter the CSV file will be updated.

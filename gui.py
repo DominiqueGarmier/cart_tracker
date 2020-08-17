@@ -25,7 +25,11 @@ class Window:
     '''
 
     def __init__(self, io_handler, debug=False):
-            
+        '''
+        initializes all the displayable objects, doesnt display them yet
+        and defines all the focus transfer functions
+        '''
+
         # define root
         self._root = tk.Tk()
         self._root.title('KSA Wäscheversorgung - Wagen Tracker')
@@ -79,7 +83,7 @@ class Window:
 
         def new_carts_button_click(event):
             os.startfile(os.path.abspath('./cart_names.txt'))
-            self._root.destroy() # TODO
+            self._root.destroy()
 
         # define autocomplete entries
         self._autocomplete_textbox_main = AutocompleteEntry(leave_func=focus_to_signature_textbox, width=80, font=self._lfont, listboxLength=4)
@@ -109,6 +113,9 @@ class Window:
         self._root.mainloop()
 
     def display_main(self):
+        '''
+        clear the display and show the gui elements of the "main" page
+        '''
         self.clear_display()
 
         # menu button
@@ -133,6 +140,9 @@ class Window:
 
 
     def display_correct(self):
+        '''
+        clear the display and show the gui elements of the "correct" page
+        '''
         self.clear_display()
         
         # menu button
@@ -152,10 +162,21 @@ class Window:
         self._new_carts_button.grid(column=0, row=2, sticky=tk.SE)
 
     def clear_display(self):
+        '''
+        clear the display by hiding all gui elements
+        '''
         for element in self._root.grid_slaves():
             element.grid_forget()
 
     def main_button_click(self):
+        '''
+        what happens when you press the save button on the main page:
+
+        check if you entered something,
+        grab what you entered, format it, ask for confirmation and then
+        add new entries to the csv file.
+        finally it also closes the window.
+        '''
         cart_numbers = self._autocomplete_textbox_main.get()
         signature = self._signature_textbox_main.get()
 
@@ -181,6 +202,13 @@ class Window:
                 pass
 
     def correct_button_click(self):
+        '''
+        what happens when you hit the save button the the "correct" page:
+
+        checks if you entered something, asks you to confirm,
+        then it updates the csv by deleting the chosen entries.
+        finally it closes the window.
+        '''
         cart_numbers_to_delete_str = self._autocomplete_textbox_correct.get()
         cart_numbers_to_delete = re.split(',|;', cart_numbers_to_delete_str)
         cart_numbers_to_delete = [number.strip() for number in cart_numbers_to_delete]
@@ -218,11 +246,6 @@ class Window:
             
             else:
                 pass
-
-
-
-
-
 
 class AutocompleteEntry(tk.Entry):
     '''
@@ -400,8 +423,3 @@ class AutocompleteEntry(tk.Entry):
             self.listboxLength = False
 
         super().grid_forget()
-
-
-h = IOHandler('./data.csv')
-w = Window(h)
-w.main_loop()
