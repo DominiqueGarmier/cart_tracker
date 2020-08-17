@@ -319,7 +319,7 @@ class AutocompleteEntry(tk.Entry):
         '''
         to change keywords proposed by the autocomplete
         '''
-        self.autocompleteList = autocomplete_list
+        self.autocompleteList = list(dict.fromkeys(autocomplete_list))
 
     def changed(self, name, index, mode):
         '''
@@ -352,7 +352,7 @@ class AutocompleteEntry(tk.Entry):
         
     def selection(self, event):
         '''
-        even triggered when an autocomplete word is selected
+        event triggered when an autocomplete word is selected
 
         pastes the autocomplete word into the Entry and adds commas inbetween the words
 
@@ -368,7 +368,8 @@ class AutocompleteEntry(tk.Entry):
             # add spaces after commas
             new_words = ''
             for word in  curr_words:
-                new_words += word + ', '
+                if word in self.autocompleteList:
+                    new_words += word + ', '
 
             new_words += self.listbox.get(tk.ACTIVE)
             self.var.set(new_words)
@@ -377,10 +378,23 @@ class AutocompleteEntry(tk.Entry):
             self.icursor(tk.END)
         else:
             # if listbox wasnt displayed skip to focus next wiget imediately
-            self.leave_func(False)
+            _ = re.split(',|;', self.var.get())
+            curr_words = [word.strip() for word in _]
+
+            new_words = ''
+            for word in  curr_words:
+                if word in self.autocompleteList:
+                    new_words += word + ', '
+
+            self.var.set(new_words[:-2])
+            self.listbox.destroy()
+            self.listboxUp = False
+
+            # switch focus
+            self.leave_func(None)
 
     def change_selected(self, event):
-        self.focus()
+        self.focus ()
         self.bind("<Return>", self.selection)
 
     def moveUp(self, event):

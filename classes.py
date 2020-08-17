@@ -112,7 +112,9 @@ class Entry:
         self._cart_number = cart_number # string
         self._state = state             # string: "done" or "pending" #TODO use bool?
         self._signature = signatrue     # string
-        self._timestamp = str(datetime.datetime.now()) # timestamp to see when a cart was completed
+        
+        _ = datetime.datetime.now().time()
+        self._timestamp = "{}:{}".format(_.hour, _.minute) # timestamp to see when a cart was completed
 
     def __str__(self):
         '''

@@ -2,6 +2,11 @@
 # Created by https://www.toptal.com/developers/gitignore/api/python,latex,visualstudiocode,visualstudio,microsoftoffice
 # Edit at https://www.toptal.com/developers/gitignore?templates=python,latex,visualstudiocode,visualstudio,microsoftoffice
 
+### cart_tracker ###
+## data files and config files
+*.ini
+*.csv
+
 ### LaTeX ###
 ## Core latex/pdflatex auxiliary files:
 *.aux
