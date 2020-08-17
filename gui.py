@@ -15,6 +15,7 @@ import os
 
 # 3rd party imports
 import tkinter as tk
+from tkinter import ttk
 from tkinter import messagebox
 
 from classes import IOHandler
@@ -64,6 +65,9 @@ class Window:
         
         # register new carts button   
         self._new_carts_button = tk.Label(self._root, text='neue Wagennummern registrieren', font=self._ulfont, cursor="hand2")
+
+        # copyright button
+        self._copyright_label = tk.Label(self._root, text='copyright (c) Dominique Garmier 2020', font=self._sfont)
 
         # focus transfer functions and focus relevant functions
         def focus_to_signature_textbox(event):
@@ -138,6 +142,9 @@ class Window:
         # new carts button
         self._new_carts_button.grid(column=0, row=4, sticky=tk.SE)
 
+        # copyright label
+        self._copyright_label.grid(column=0, row=4, sticky=tk.SW)
+
 
     def display_correct(self):
         '''
@@ -161,6 +168,9 @@ class Window:
         # new carts button
         self._new_carts_button.grid(column=0, row=2, sticky=tk.SE)
 
+        # copyright label
+        self._copyright_label.grid(column=0, row=2, sticky=tk.SW)
+
     def clear_display(self):
         '''
         clear the display by hiding all gui elements
@@ -180,8 +190,14 @@ class Window:
         cart_numbers = self._autocomplete_textbox_main.get()
         signature = self._signature_textbox_main.get()
 
-        if not cart_numbers or not signature:
+        if not cart_numbers and not signature:
             messagebox.showwarning("Warnung", "Es wurden nicht alle Felder ausgefüllt!")
+
+        elif not cart_numbers:
+            messagebox.showwarning("Warnung", "Es wurde keine Wagennummer angegeben.")
+            
+        elif not signature:
+            messagebox.showwarning("Warnung", "Es wurden keine Initialen angegeben.")
 
         else:
             answer = messagebox.askokcancel("Frage", "Der/Die Wagen: " + cart_numbers +" als erledigt Speichern?")
@@ -213,7 +229,7 @@ class Window:
         cart_numbers_to_delete = re.split(',|;', cart_numbers_to_delete_str)
         cart_numbers_to_delete = [number.strip() for number in cart_numbers_to_delete]
 
-        if not cart_numbers_to_delete:
+        if not cart_numbers_to_delete_str:
             messagebox.showwarning("Warnung", "Das Feld wurde nicht ausgefüllt!")
 
         else:

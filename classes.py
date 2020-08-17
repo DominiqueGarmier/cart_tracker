@@ -27,6 +27,9 @@ class IOCache:
 class IOHandler:
     
     def __init__(self, data_path):
+        '''
+        inits the IOCache and the Data object
+        '''
         self._cache = IOCache()
         self._data = Data(data_path)
 
