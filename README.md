@@ -1,5 +1,5 @@
 # cart_tracker
-by [Dominique Garmier](github.com/dominiquegarmier) (c) 2020
+by [Dominique Garmier](https://github.com/dominiquegarmier) [📧](dominique@garmier.ch) (c) 2020
 
 App developed for the Kantonsspital Aarau, to track the status of laundry carts.
 
