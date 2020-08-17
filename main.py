@@ -13,7 +13,7 @@ import os
 import configparser
 
 # local imports
-from classes import IOHandler, Data
+from classes import IOHandler
 import gui
 
 # 3rd party imports
@@ -41,12 +41,8 @@ debug = config.getboolean('DEFAULT', 'debug')
 # create iohandler
 handler = IOHandler(data_path)
 
-# read cart_names.txt for the autocomplete list
-with open('./cart_names.txt') as cart_names:
-    autocomplete_list = cart_names.read().splitlines()
-
 # main function
 if __name__ == '__main__':
     # create window and start it
-    window = gui.Window(handler, debug, autocomplete_list, './cart_names.txt')
-    window.mainloop()
+    window = gui.Window(handler, debug)
+    window.main_loop()
