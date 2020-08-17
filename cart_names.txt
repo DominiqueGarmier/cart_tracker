@@ -2,9 +2,9 @@ Station 182
 Station 172
 Station 162 B
 Station 152 (SIC)
-Urologie
-Bettenzentrale
-Anaesthesie/Lagerungspflege
+Urologie H1
+Bettenzentrale H1 - 1
+Anaesthesie/Lagerungspflege 1
 Station 121
 Station 122
 Station 141
@@ -22,13 +22,13 @@ Station 721
 Station 731
 Station 731 ISO-Wagen
 Station 741
-Bettenzentrale
+Bettenzentrale H7
 EEG
 Station 411
 Station 421
 Station 431
 Station 441
-Bettenzentrale
+Bettenzentrale - H4
 Station 211
 Station 221
 Stomatologie
@@ -38,9 +38,9 @@ Station 111
 Station 112
 Station 812
 Reservewagen H16
-Bettenzentrale
-Bettenzentrale
-Anaesthesie/Lagerungspflege
+Bettenzentrale H8
+Bettenzentrale H1 - 2
+Anaesthesie/Lagerungspflege 2
 Blutspende
 AEMP
 OP-Garderobe Herren
@@ -63,10 +63,11 @@ Pathologie
 Strahlentherapie
 Gasterberinnen Garderobe
 Pikettzimmer
-Urologie
+Urologie ZM
 Angiologie
 Hals-Nasen-Ohren (HNO)
 Station 821
 Station 823
 Station 831
 Geburtenhaus
+
