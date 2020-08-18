@@ -191,22 +191,22 @@ class Window:
         _ = re.split(',|;', self._autocomplete_textbox_main.var.get())
         curr_words = [word.strip() for word in _]
 
-        print(curr_words)
-
         new_words = ''
         for word in  curr_words:
             if word in self._autocomplete_textbox_main.autocompleteList and word:
                 new_words += word + ', '
 
         self._autocomplete_textbox_main.var.set(new_words[:-2])
-        self._autocomplete_textbox_main.listbox.destroy()
-        self._autocomplete_textbox_main.listboxUp = False
+
+        if self._autocomplete_textbox_main.listboxUp:
+            self._autocomplete_textbox_main.listbox.destroy()
+            self._autocomplete_textbox_main.listboxUp = False
 
         cart_numbers = self._autocomplete_textbox_main.get()
         signature = self._signature_textbox_main.get()
 
         if not cart_numbers and not signature:
-            messagebox.showwarning("Warnung", "Es wurden nicht alle Felder ausgefüllt!")
+            messagebox.showwarning("Warnung", "Es wurden nicht alle Felder ausgefüllt.")
 
         elif not cart_numbers:
             messagebox.showwarning("Warnung", "Es wurde keine (existierende) Wagennummer angegeben.")
@@ -245,23 +245,23 @@ class Window:
         _ = re.split(',|;', self._autocomplete_textbox_correct.var.get())
         curr_words = [word.strip() for word in _]
 
-        print(curr_words)
-
         new_words = ''
         for word in  curr_words:
             if word in self._autocomplete_textbox_correct.autocompleteList and word:
                 new_words += word + ', '
 
         self._autocomplete_textbox_correct.var.set(new_words[:-2])
-        self._autocomplete_textbox_correct.listbox.destroy()
-        self._autocomplete_textbox_correct.listboxUp = False
+
+        if self._autocomplete_textbox_correct.listboxUp:
+            self._autocomplete_textbox_correct.listbox.destroy()
+            self._autocomplete_textbox_correct.listboxUp = False
 
         cart_numbers_to_delete_str = self._autocomplete_textbox_correct.get()
         cart_numbers_to_delete = re.split(',|;', cart_numbers_to_delete_str)
         cart_numbers_to_delete = [number.strip() for number in cart_numbers_to_delete]
 
         if not cart_numbers_to_delete_str:
-            messagebox.showwarning("Warnung", "Das Feld wurde nicht ausgefüllt!")
+            messagebox.showwarning("Warnung", "Es wurde keine (existierende) Wagennummer angegeben.")
 
         else:
             answer = messagebox.askokcancel("Frage", "Der/Die Wagen: " + cart_numbers_to_delete_str +" aus den erledigten Wagen entfernen?")
