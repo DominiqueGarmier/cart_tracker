@@ -89,7 +89,7 @@ class Window:
             os.startfile(os.path.abspath('./cart_names.txt'))
 
         # define autocomplete entries
-        self._autocomplete_textbox_main = AutocompleteEntry(leave_func=focus_to_signature_textbox, width=80, font=self._lfont, listboxLength=4, autocomplete_refresh=True)
+        self._autocomplete_textbox_main = AutocompleteEntry(leave_func=focus_to_signature_textbox, width=80, font=self._lfont, listboxLength=4)
         self._autocomplete_textbox_correct = AutocompleteEntry(leave_func=focus_to_correct_save_button, width=80, font=self._lfont, listboxLength=2)
 
         # bind focus related functions to inputs
@@ -111,9 +111,19 @@ class Window:
         self._io_handler._data.pull()
         entered_carts = self._io_handler._data._df.get('cart_number').to_list()[1:]
 
-        # pass list of keywords to both autocomplete entries
-        self._autocomplete_textbox_main.set_autocomplete_list(possible_carts)
-        self._autocomplete_textbox_correct.set_autocomplete_list(entered_carts)
+        # pass autocomplete source to entries
+        # autocomplete source functions
+
+        def main_autocomplete_source():
+            with open('./cart_names.txt') as cart_names:
+                return cart_names.read().splitlines()
+
+        # this could be replaced directly with the list, but will be changed in the future probably
+        def correct_autocomplete_source():
+            return entered_carts
+
+        self._autocomplete_textbox_main.set_autocomplete_list_source(main_autocomplete_source)
+        self._autocomplete_textbox_correct.set_autocomplete_list_source(correct_autocomplete_source)
 
         # switch to display main page
         self.display_main()
@@ -195,7 +205,7 @@ class Window:
         finally it also closes the window.
         '''
 
-        # formates entry to only contain valid namess
+        # formats entry to only contain valid namess
         _ = re.split(',|;', self._autocomplete_textbox_main.var.get())
         curr_words = [word.strip() for word in _]
 
@@ -325,7 +335,7 @@ class AutocompleteEntry(tk.Entry):
 
     create dropdown list of possible autocompletes, use arrow keys to navigate up and down, return to select
     '''
-    def __init__(self, leave_func, autocomplete_refresh=False, *args, **kwargs):
+    def __init__(self, leave_func, autocomplete_list_source=[], *args, **kwargs):
         '''
         creates the widget,
 
@@ -333,8 +343,21 @@ class AutocompleteEntry(tk.Entry):
         TODO make matches function return tupel instead of string to rank the words for relevance
         '''
         
-        self._autocomplete_refresh = autocomplete_refresh
+        # from where to grab auto complete list, either its the list directly or its a function taking no args that generates the list
+        self._autocomplete_list_source = autocomplete_list_source
 
+        if type(self._autocomplete_list_source) is list:
+
+            # if autocomp source is a list then take that as the list it self
+            self._autocomplete_refresh = False
+            self.autocompleteList = list(dict.fromkeys(self._autocomplete_list_source)) # remove duplicates
+            
+        elif callable(elf._autocomplete_list_source):
+
+            # else if its a function use the return value as the list
+            self._autocomplete_refresh = True
+            self.autocompleteList = self._autocomplete_list_source()
+            self._last_refresh = time.time()
 
         # Listbox length
         if 'listboxLength' in kwargs:
@@ -372,12 +395,23 @@ class AutocompleteEntry(tk.Entry):
         
         self.listboxUp = False
 
-    def set_autocomplete_list(self, autocomplete_list):
+    def set_autocomplete_list_source(self, autocomplete_list_source):
         '''
         to change keywords proposed by the autocomplete
         '''
-        self.autocompleteList = list(dict.fromkeys(autocomplete_list))
-        if self._autocomplete_refresh:
+        self._autocomplete_list_source = autocomplete_list_source
+
+        if type(self._autocomplete_list_source) is list:
+
+            # if autocomp source is a list then take that as the list it self
+            self._autocomplete_refresh = False
+            self.autocompleteList = list(dict.fromkeys(self._autocomplete_list_source)) # remove duplicates
+
+        elif callable(self._autocomplete_list_source):
+
+            # else if its a function use the return value as the list
+            self._autocomplete_refresh = True
+            self.autocompleteList = self._autocomplete_list_source()
             self._last_refresh = time.time()
 
     def changed(self, name, index, mode):
@@ -388,11 +422,9 @@ class AutocompleteEntry(tk.Entry):
         '''
 
         # if autocomplete refresh is True update the autocomplete list every 5 seconds
-        if self._autocomplete_refresh:
-            if time.time() - self._last_refresh > 5:
-                self._last_refresh = time.time()
-                with open('./cart_names.txt') as cart_names:
-                    self.autocompleteList = cart_names.read().splitlines()
+        if self._autocomplete_refresh and time.time() - self._last_refresh > 5:
+            self._last_refresh = time.time()
+            self.autocompleteList = self._autocomplete_list_source()
 
         # destroy the listbox if nothing is entered
         if self.var.get() == '':
