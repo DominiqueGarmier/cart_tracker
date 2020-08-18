@@ -6,6 +6,7 @@
 ## data files and config files
 *.ini
 *.csv
+cart_names.txt
 
 ### LaTeX ###
 ## Core latex/pdflatex auxiliary files:
