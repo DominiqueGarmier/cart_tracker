@@ -114,7 +114,12 @@ class Entry:
         self._signature = signatrue     # string
         
         _ = datetime.datetime.now().time()
-        self._timestamp = "{}:{}".format(_.hour, _.minute) # timestamp to see when a cart was completed
+
+        min = _.minute
+        if len(min) == 1:
+            min = '0' + min
+
+        self._timestamp = "{}:{}".format(_.hour, min) # timestamp to see when a cart was completed
 
     def __str__(self):
         '''
