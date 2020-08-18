@@ -24,10 +24,12 @@ You can now create a shortcut to the [cart_tracker.vbs](./cart_tracker.vbs), whi
 
 ## How to use.
 
-Click the shortcut you created, a window will pop up prompting you to enter one or more cart numbers separated by commas. An autocomplete dropdown menu will help you type the cartnames correctly. Use the Arrow and Return keys to navigate.
+Click the shortcut you created, a window will pop up prompting you to enter one or more cart numbers separated by commas. An autocomplete dropdown menu will help you type the cartnames correctly. Use the Arrow and Return keys to navigate. The autocompletet entry will only allow you to type valid names i.e. those in the cart_names.txt file.
 
-The second textfield asks you to provide a signature, type something like the first letters for your first and last name. It's to later on identify who loaded that cart.
+To navigate between textfields hit the return button. Depending on the context you may need to hit the return button more than once (to select the entry in the autocompletet and then to skip ahead)
+
+The second textfield asks you to provide a signature, type something like the first letters of your first and last name. It's to later on identify who loaded that cart.
 
 After hitting return again you will be asked to confirm your entries. If you do so they will be saved in a specified CSV file where they can be read in real time by an Excel spreadsheet.
 
-If you messed up and want to remove an entry you falsely entered, you can hit the "Korrektur" Button at the top left. This will open a new Page where you only have to enter the cart name you want to remove. This Textfield also has an autocomplete feature, only autocompleting to cartnames already in the entries. After hitting enter the CSV file will be updated.
+If you want to remove an entry you falsely entered, you can hit the "Korrektur" Button at the top left. This will open a new Page where you only have to enter the cart name you want to remove. This Textfield also has an autocomplete feature, only autocompleting to cart names already in the entries (else it works the same as the first autocomplete entry). After hitting enter the CSV file will be updated.
