@@ -5,7 +5,7 @@ App developed for the Kantonsspital Aarau, to track the status of laundry carts.
 
 The App ist meant to be used by the employees to check-off certain carts as "Done" once they are loaded. The Information about all the carts is then written to a remote CSV file which can be read in real-time by an excel sheet.
 
-## How to install.
+## How to install
 
 [cart_tracker](https://github.com/dominiquegarmier/cart_tracker) only works for Windows (10). It can however be adapted for unix use. Namely by replacing the *.bat and *.vbs files with their respective unix counterparts.
 
@@ -30,7 +30,7 @@ The ````debug```` option makes python print out entries and some other minor mes
 
 For this specific usecase we want our *.csv file to be cleared once per day to reset the states of all the carts. for this there exists the [delete_data.bat](./delete_data.bat) which intern runs the [delete_data.py](./delete_data.py) file.Here we can use the built in windows Task-Scheduler, or alternatively on unix a cron task, to trigger the *.bat file once per day.
 
-## How to use.
+## How to use
 
 Click the shortcut you created, a window will pop up prompting you to enter one or more cart numbers separated by commas. An autocomplete dropdown menu will help you type the cartnames correctly. Use the Arrow and Return keys to navigate. The autocompletet entry will only allow you to type valid names i.e. those in the cart_names.txt file.
 
@@ -41,3 +41,7 @@ The second textfield asks you to provide a signature, type something like the fi
 After hitting return again you will be asked to confirm your entries. If you do so they will be saved in a specified CSV file where they can be read in real time by an Excel spreadsheet.
 
 If you want to remove an entry you falsely entered, you can hit the "Korrektur" Button at the top left. This will open a new Page where you only have to enter the cart name you want to remove. This Textfield also has an autocomplete feature, only autocompleting to cart names already in the entries (else it works the same as the first autocomplete entry). After hitting enter the CSV file will be updated.
+
+## How to update
+
+[cart_tracker](https://github.com/dominiquegarmier/cart_tracker) can be updated using ````git````. If the repo was cloned as is, you can simply run ````git pull````. The config file and the [cart_names.txt](./cart_names.txt) file are both in the [.gitignore](./gitignore).
