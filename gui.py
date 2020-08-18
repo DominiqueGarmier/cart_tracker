@@ -53,7 +53,7 @@ class Window:
         # define labels
         self._main_label_top = tk.Label(self._root, text='Welche(n) Wagen haben Sie beladen?', font=self._lfont)
         self._main_label_bottom = tk.Label(self._root, text='Was sind Ihre Initialen?', font=self._lfont)
-        self._correction_label = tk.Label(self._root, text='Welche(r) Wagen soll aus den erledigten entfernt werden?', font=self._lfont)
+        self._correction_label = tk.Label(self._root, text='Welche(r) Wagen soll(en) aus den erledigten entfernt werden?', font=self._lfont)
 
 
         # define regular entries
