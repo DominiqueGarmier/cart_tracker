@@ -87,10 +87,9 @@ class Window:
 
         def new_carts_button_click(event):
             os.startfile(os.path.abspath('./cart_names.txt'))
-            self._root.destroy()
 
         # define autocomplete entries
-        self._autocomplete_textbox_main = AutocompleteEntry(leave_func=focus_to_signature_textbox, width=80, font=self._lfont, listboxLength=4)
+        self._autocomplete_textbox_main = AutocompleteEntry(leave_func=focus_to_signature_textbox, width=80, font=self._lfont, listboxLength=4, autocomplete_refresh=True)
         self._autocomplete_textbox_correct = AutocompleteEntry(leave_func=focus_to_correct_save_button, width=80, font=self._lfont, listboxLength=2)
 
         # bind focus related functions to inputs
@@ -271,13 +270,16 @@ class AutocompleteEntry(tk.Entry):
 
     create dropdown list of possible autocompletes, use arrow keys to navigate up and down, return to select
     '''
-    def __init__(self, leave_func, *args, **kwargs):
+    def __init__(self, leave_func, autocomplete_refresh=False, *args, **kwargs):
         '''
         creates the widget,
 
         machesFunction defines the function used to determine the displayed autocomplete results at any time,
         TODO make matches function return tupel instead of string to rank the words for relevance
         '''
+        
+        self._autocomplete_refresh = autocomplete_refresh
+
 
         # Listbox length
         if 'listboxLength' in kwargs:
@@ -320,6 +322,8 @@ class AutocompleteEntry(tk.Entry):
         to change keywords proposed by the autocomplete
         '''
         self.autocompleteList = list(dict.fromkeys(autocomplete_list))
+        if self._autocomplete_refresh:
+            self._last_refresh = time.time()
 
     def changed(self, name, index, mode):
         '''
@@ -327,6 +331,13 @@ class AutocompleteEntry(tk.Entry):
 
         causes the autocomplete list to change
         '''
+
+        if self._autocomplete_refresh:
+            if time.time() - self._last_refresh > 5:
+                self._last_refresh = time.time()
+                with open('./cart_names.txt') as cart_names:
+                    self.autocompleteList = cart_names.read().splitlines()
+
         if self.var.get() == '':
             if self.listboxUp:
                 self.listbox.destroy()
