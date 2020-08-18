@@ -117,7 +117,7 @@ class Entry:
 
         min = _.minute
         if len(str(min)) == 1:
-            min = '0' + min
+            min = '0' + str(min)
 
         self._timestamp = "{}:{}".format(_.hour, min) # timestamp to see when a cart was completed
 
