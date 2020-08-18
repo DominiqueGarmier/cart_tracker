@@ -103,15 +103,19 @@ class Window:
         Display the window and display the main page
         '''
 
+        # read cart names for autocompletions
         with open('./cart_names.txt') as cart_names:
             possible_carts = cart_names.read().splitlines()
 
+        # read already entered cart names for autocompletion
         self._io_handler._data.pull()
         entered_carts = self._io_handler._data._df.get('cart_number').to_list()[1:]
 
+        # pass list of keywords to both autocomplete entries
         self._autocomplete_textbox_main.set_autocomplete_list(possible_carts)
         self._autocomplete_textbox_correct.set_autocomplete_list(entered_carts)
 
+        # switch to display main page
         self.display_main()
         self._root.mainloop()
 
@@ -119,6 +123,8 @@ class Window:
         '''
         clear the display and show the gui elements of the "main" page
         '''
+
+        # clear previous page
         self.clear_display()
 
         # menu button
@@ -149,6 +155,8 @@ class Window:
         '''
         clear the display and show the gui elements of the "correct" page
         '''
+
+        # clear previous page
         self.clear_display()
         
         # menu button
@@ -196,15 +204,19 @@ class Window:
             if word in self._autocomplete_textbox_main.autocompleteList and word:
                 new_words += word + ', '
 
+        # set entry to contain formated strings
         self._autocomplete_textbox_main.var.set(new_words[:-2])
 
+        # remove listbox if its up
         if self._autocomplete_textbox_main.listboxUp:
             self._autocomplete_textbox_main.listbox.destroy()
             self._autocomplete_textbox_main.listboxUp = False
 
+        # grab strings from the entry fields
         cart_numbers = self._autocomplete_textbox_main.get()
         signature = self._signature_textbox_main.get()
 
+        # warning messages if entries arent filled properly
         if not cart_numbers and not signature:
             messagebox.showwarning("Warnung", "Es wurden nicht alle Felder ausgefüllt.")
 
@@ -214,10 +226,13 @@ class Window:
         elif not signature:
             messagebox.showwarning("Warnung", "Es wurden keine Initialen angegeben.")
 
+        # if everything is entered correclty ask for confirmation
         else:
             answer = messagebox.askokcancel("Frage", "Der/Die Wagen: " + cart_numbers +" als erledigt Speichern?")
 
             if answer:
+
+                # let the io handler process the inputs
                 self._io_handler.grab_input(cart_numbers, signature)
                 self._io_handler.process_input()
 
@@ -250,28 +265,36 @@ class Window:
             if word in self._autocomplete_textbox_correct.autocompleteList and word:
                 new_words += word + ', '
 
+        # puts formated strings into the entries text field
         self._autocomplete_textbox_correct.var.set(new_words[:-2])
 
+        # remove the listbox if it exists
         if self._autocomplete_textbox_correct.listboxUp:
             self._autocomplete_textbox_correct.listbox.destroy()
             self._autocomplete_textbox_correct.listboxUp = False
 
+        # read the entry and process the string
         cart_numbers_to_delete_str = self._autocomplete_textbox_correct.get()
         cart_numbers_to_delete = re.split(',|;', cart_numbers_to_delete_str)
         cart_numbers_to_delete = [number.strip() for number in cart_numbers_to_delete]
 
+        # trow warning if nothing was entered
         if not cart_numbers_to_delete_str:
             messagebox.showwarning("Warnung", "Es wurde keine (existierende) Wagennummer angegeben.")
 
+        # ask for confirmation
         else:
             answer = messagebox.askokcancel("Frage", "Der/Die Wagen: " + cart_numbers_to_delete_str +" aus den erledigten Wagen entfernen?")
 
             if answer:
+
+                # grab a copy of the existing entries from the io handler
                 self._io_handler._data.pull()
                 df = self._io_handler._data._df
 
                 cart_numbers = df.get('cart_number').to_list()
 
+                # find the entries to remove and remove them
                 indices_to_delete = []
                 for cart_number_to_delete in cart_numbers_to_delete:
 
@@ -364,12 +387,14 @@ class AutocompleteEntry(tk.Entry):
         causes the autocomplete list to change
         '''
 
+        # if autocomplete refresh is True update the autocomplete list every 5 seconds
         if self._autocomplete_refresh:
             if time.time() - self._last_refresh > 5:
                 self._last_refresh = time.time()
                 with open('./cart_names.txt') as cart_names:
                     self.autocompleteList = cart_names.read().splitlines()
 
+        # destroy the listbox if nothing is entered
         if self.var.get() == '':
             if self.listboxUp:
                 self.listbox.destroy()
