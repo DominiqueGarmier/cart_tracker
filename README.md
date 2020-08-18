@@ -3,24 +3,32 @@ by [Dominique Garmier](https://github.com/dominiquegarmier) (c) 2020
 
 App developed for the Kantonsspital Aarau, to track the status of laundry carts.
 
-The App ist meant to be used by the employees to check-off certain carts as "Done" once they are loaded.
-The Information about all the carts is then written to a remote CSV file which can be read in real-time by an excel sheet.
+The App ist meant to be used by the employees to check-off certain carts as "Done" once they are loaded. The Information about all the carts is then written to a remote CSV file which can be read in real-time by an excel sheet.
 
 ## How to install.
 
-This only works for Microsoft Windows environments. Minor tweaks could be made to use the app in other environments,
-namely replacing all the .bat and .vbs files with their respective counterparts.
+[cart_tracker](https://github.com/dominiquegarmier/cart_tracker) only works for Windows (10). It can however be adapted for unix use. Namely by replacing the *.bat and *.vbs files with their respective unix counterparts.
 
-Python 3.8 or later needs to be installed and added to Path, check the .bat files to make sure they work for your system.
-This means perhaps changing "python" to "python3" or even "my/path/to/python".
+First off [Python 3.8](https://python.org) or later needs to be installed. Using ````pip```` you can install the required packages the following way:
 
-Next the [requirements.txt](./requirements.txt) needs to be installed.
+````
+$ pip install -r requirements.txt
+````
+It is also advised that you add [Python](https://python.org) to your PATH. Else you would need to adjust all the *.bat and *.vbs files. Since in their current state, they rely on PATH.
 
-Inside the [config.ini](./config.ini) file, the Path to the aformentionted CSV file needs to be defined.
+Next we should take a look at the [config.ini](./config.ini) file:
 
-For this specific usecase we want the CSV file to be cleared every morning, which is why we have to setup a scheduled task to execute the [delete_data.bat](./delete_data.bat) file every day.
+````
+[DEFAULT]
+data_path = ./data.csv
+debug = False
+````
 
-You can now create a shortcut to the [cart_tracker.vbs](./cart_tracker.vbs), which can be used to register new carts that are "done".
+The option ````data_path```` is to specify where you want to store the raw data. In our inteded usecase this would be a remote map drive.
+
+The ````debug```` option makes python print out entries and some other minor messages.
+
+For this specific usecase we want our *.csv file to be cleared once per day to reset the states of all the carts. for this there exists the [delete_data.bat](./delete_data.bat) which intern runs the [delete_data.py](./delete_data.py) file.Here we can use the built in windows Task-Scheduler, or alternatively on unix a cron task, to trigger the *.bat file once per day.
 
 ## How to use.
 
