@@ -64,7 +64,7 @@ class Window:
         self._correct_save_button = tk.Button(text='Speichern', command=self.correct_button_click, font=self._lfont)
         
         # register new carts button   
-        self._new_carts_button = tk.Label(self._root, text='neue Wagennummern registrieren', font=self._ulfont, cursor="hand2")
+        self._new_carts_button = tk.Label(self._root, text='Neue Wagennummern registrieren.', font=self._ulfont, cursor="hand2")
  
         # copyright button
         self._copyright_label = tk.Label(self._root) #, text='Copyright (c) Dominique Garmier 2020', font=self._sfont)
