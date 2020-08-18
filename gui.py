@@ -66,9 +66,9 @@ class Window:
         # register new carts button   
         self._new_carts_button = tk.Label(self._root, text='Neue Wagennummern registrieren.', font=self._ulfont, cursor="hand2")
  
-        # copyright buttons
+        # copyright button
         self._copyright_label = tk.Label(self._root) #, text='Copyright (c) Dominique Garmier 2020', font=self._sfont)
-            
+
         # focus transfer functions and focus relevant functions
         def focus_to_signature_textbox(event):
             self._signature_textbox_main.focus_set()
