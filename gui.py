@@ -238,7 +238,7 @@ class Window:
 
         # if everything is entered correclty ask for confirmation
         else:
-            answer = messagebox.askokcancel("Frage", "Der/Die Wagen: " + cart_numbers +" als erledigt Speichern?")
+            answer = messagebox.askokcancel("Frage", "Der/Die Wagen: " + cart_numbers + " als erledigt Speichern?")
 
             if answer:
 
