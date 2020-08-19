@@ -111,9 +111,7 @@ class Window:
         self._io_handler._data.pull()
         entered_carts = self._io_handler._data._df.get('cart_number').to_list()[1:]
 
-        # pass autocomplete source to entries
         # autocomplete source functions
-
         def main_autocomplete_source():
             with open('./cart_names.txt') as cart_names:
                 return cart_names.read().splitlines()
@@ -367,21 +365,28 @@ class AutocompleteEntry(tk.Entry):
             self.listboxLength = 4
 
         # Custom matches function
+        # matchesfunction has to take two words and return a boolean value b contains a
         if 'matchesFunction' in kwargs:
             self.matchesFunction = kwargs['matchesFunction']
             del kwargs['matchesFunction']
         else:
+
+            # default matches function returns true if field entry is an ordered subset of acListEntry
             def matches(fieldValue, acListEntry):
                 pattern = re.compile('.*' + re.escape(fieldValue) + '.*', re.IGNORECASE)
                 return re.match(pattern, acListEntry)
+            
+            # set default match function
             self.matchesFunction = matches
         
         # init base Entry field
         tk.Entry.__init__(self, *args, **kwargs)
         self.focus()
 
+        # function to leave focus
         self.leave_func = leave_func
         
+        # entry text
         self.var = self["textvariable"]
         if self.var == '':
             self.var = self["textvariable"] = tk.StringVar()
@@ -393,12 +398,15 @@ class AutocompleteEntry(tk.Entry):
         self.bind("<Up>", self.moveUp)
         self.bind("<Down>", self.moveDown)
         
+        # dont show listbox (autocomplete list)
         self.listboxUp = False
 
     def set_autocomplete_list_source(self, autocomplete_list_source):
         '''
         to change keywords proposed by the autocomplete
         '''
+
+        # change the source of the autocomplete list
         self._autocomplete_list_source = autocomplete_list_source
 
         if type(self._autocomplete_list_source) is list:
@@ -432,9 +440,15 @@ class AutocompleteEntry(tk.Entry):
                 self.listbox.destroy()
                 self.listboxUp = False
         else:
+
+            # generate proposed autocomplete words
             words = self.comparison()
+
             if words:
+
+                # show listbox with the relevant words in it
                 self.bind("<Return>", self.selection)
+
                 if not self.listboxUp:
                     self.listbox = tk.Listbox(width=self["width"], font=self['font'], height=self.listboxLength)
                     self.listbox.bind("<ButtonRelease-1>", self.change_selected)
@@ -443,9 +457,14 @@ class AutocompleteEntry(tk.Entry):
                     self.listboxUp = True
                 
                 self.listbox.delete(0, tk.END)
+
+                # set contents of listbox
                 for w in words:
                     self.listbox.insert(tk.END, w)
+
             else:
+
+                # destroy listbox
                 if self.listboxUp:
                     self.listbox.destroy()
                     self.listboxUp = False
@@ -458,7 +477,12 @@ class AutocompleteEntry(tk.Entry):
 
         binds return to skipping focus to next widget
         '''
+
+        # next time you hit return, chanage focus using leave_func
         self.bind("<Return>", self.leave_func)
+        
+        # paste contents of the selected element of the listbox
+        # into the entry
         if self.listboxUp:
 
             # reformat the cart numbers already written
@@ -473,9 +497,12 @@ class AutocompleteEntry(tk.Entry):
 
             new_words += self.listbox.get(tk.ACTIVE)
             self.var.set(new_words)
+
+            # close the listbox
             self.listbox.destroy()
             self.listboxUp = False
             self.icursor(tk.END)
+
         else:
             # if listbox wasnt displayed skip to focus next wiget imediately
             _ = re.split(',|;', self.var.get())
@@ -502,6 +529,8 @@ class AutocompleteEntry(tk.Entry):
         scrolling up in the autocomplete list using up arrow
         '''
         if self.listboxUp:
+
+            # rotate trough selected elements in the listbox
             if self.listbox.curselection() == ():
                 index = '1'
                 self.listbox.see(index) # Scroll!
@@ -545,9 +574,14 @@ class AutocompleteEntry(tk.Entry):
         '''
         generate list of words to display in the autocomplete dropdown list using the matches function
         '''
+
         return [w for w in self.autocompleteList if self.matchesFunction(re.split(',|;', self.var.get())[-1].strip(), w)]
     
     def grid_forget(self):
+        '''
+        hide listbox and self
+        '''
+
         if self.listboxUp:
             self.listbox.destroy()
             self.listboxLength = False
