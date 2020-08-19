@@ -2,6 +2,40 @@ import tkinter as tk
 import time
 import re
 
+class BlobText(tk.Frame):
+
+    def __init__(self, master, text, font=None, *args, **kwargs):
+        kwargs['highlightbackground'] = 'black'
+        kwargs['highlightcolor'] = 'black'
+        kwargs['highlightthickness'] = 1
+
+        super().__init__(master, *args, **kwargs)
+
+        self._exists = True
+
+        self._text = text
+        self._label = tk.Label(self, text=self._text, font=font)
+
+        def close_func():
+            self.destroy()
+            self._exists = False
+
+        self._button = tk.Button(self, text='x', relief='flat', command=close_func, font=("Calibri", 12, "bold"))
+
+        self._label.grid(column=0, row=0)
+        self._button.grid(column=1, row=0)
+
+class BlobTextDisplay(tk.Frame):
+
+    def __init__(self, master, *args, **kwargs):
+        super().__init__(master, *args, **kwargs)
+
+        self._blobs = []
+
+    def add_blob_text(self, text, *args, **kwargs):
+        blob = BlobText(master=self, text=text, *args, **kwargs)
+        blob.pack(side=tk.LEFT, padx=1)
+        self._blobs.append(blob)
 class AutocompleteEntry(tk.Entry):
     
     def __init__(self, ac_list_source, leave_function, lb_length, *args, **kwargs):
