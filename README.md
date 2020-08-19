@@ -44,4 +44,8 @@ If you want to remove an entry you falsely entered, you can hit the "Korrektur" 
 
 ## How to update
 
-[cart_tracker](https://github.com/dominiquegarmier/cart_tracker) can be updated using ````git````. If the repo was cloned as is, you can simply run ````git pull````. The config file and the [cart_names.txt](./cart_names.txt) file are both in the [.gitignore](./gitignore). This can also be done using the ````update.py```` script, which will automatically try to pull from master.
+[cart_tracker](https://github.com/dominiquegarmier/cart_tracker) can be updated using ````git````. If the repo was cloned as is, you can simply run ````git pull````. The config file and the [cart_names.txt](./cart_names.txt) file are both in the [.gitignore](./gitignore). This can also be done using the ````update.py```` script, which will automatically try to pull from master. Simply run:
+
+````
+$ python udate.py
+````
