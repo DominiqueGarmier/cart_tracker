@@ -373,7 +373,7 @@ class AutocompleteEntry(tk.Entry):
         else:
             def matches(fieldValue, acListEntry):
                 pattern = re.compile('.*' + re.escape(fieldValue) + '.*', re.IGNORECASE)
-                return re.match(pattern, acListEntry)  
+                return re.match(pattern, acListEntry)
             self.matchesFunction = matches
         
         # init base Entry field
