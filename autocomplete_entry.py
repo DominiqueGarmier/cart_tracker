@@ -60,6 +60,12 @@ class BlobTextDisplay(tk.Frame):
         blob.pack(side=tk.LEFT, padx=1)
         self._blobs.append(blob)
 
+        # check for already hidden blobs to delete them
+        for blob in self._blobs:
+            if not blob._exists:
+                self._blobs.remove(blob)
+                del blob
+
     def get_all_text(self):
         '''
         concatenate all the strings inside all the blobtexts in a format compatible with previous iterations
