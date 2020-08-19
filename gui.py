@@ -19,6 +19,7 @@ from tkinter import ttk
 from tkinter import messagebox
 
 from classes import IOHandler
+from autocomplete_entry import AutocompleteEntry
 
 class Window:
     '''
@@ -88,25 +89,6 @@ class Window:
         def new_carts_button_click(event):
             os.startfile(os.path.abspath('./cart_names.txt'))
 
-        # define autocomplete entries
-        self._autocomplete_textbox_main = AutocompleteEntry(leave_func=focus_to_signature_textbox, width=80, font=self._lfont, listboxLength=4)
-        self._autocomplete_textbox_correct = AutocompleteEntry(leave_func=focus_to_correct_save_button, width=80, font=self._lfont, listboxLength=2)
-
-        # bind focus related functions to inputs
-        self._signature_textbox_main.bind('<Return>', focus_to_main_save_button)
-        self._main_save_button.bind('<Return>', focus_main_button_click)
-        self._correct_save_button.bind('<Return>', focus_correct_button_click)
-        self._new_carts_button.bind("<Button-1>", new_carts_button_click)
-
-    def main_loop(self):
-        '''
-        Display the window and display the main page
-        '''
-
-        # read cart names for autocompletions
-        with open('./cart_names.txt') as cart_names:
-            possible_carts = cart_names.read().splitlines()
-
         # read already entered cart names for autocompletion
         self._io_handler._data.pull()
         entered_carts = self._io_handler._data._df.get('cart_number').to_list()[1:]
@@ -120,8 +102,20 @@ class Window:
         def correct_autocomplete_source():
             return entered_carts
 
-        self._autocomplete_textbox_main.set_autocomplete_list_source(main_autocomplete_source)
-        self._autocomplete_textbox_correct.set_autocomplete_list_source(correct_autocomplete_source)
+        # define autocomplete entries
+        self._autocomplete_textbox_main = AutocompleteEntry(ac_list_source=main_autocomplete_source, leave_function=focus_to_signature_textbox, lb_length=4, width=80, font=self._lfont)
+        self._autocomplete_textbox_correct = AutocompleteEntry(ac_list_source=correct_autocomplete_source, leave_function=focus_to_correct_save_button, lb_length=2, width=80, font=self._lfont)
+
+        # bind focus related functions to inputs
+        self._signature_textbox_main.bind('<Return>', focus_to_main_save_button)
+        self._main_save_button.bind('<Return>', focus_main_button_click)
+        self._correct_save_button.bind('<Return>', focus_correct_button_click)
+        self._new_carts_button.bind("<Button-1>", new_carts_button_click)
+
+    def main_loop(self):
+        '''
+        Display the window and display the main page
+        '''
 
         # switch to display main page
         self.display_main()
@@ -204,21 +198,19 @@ class Window:
         '''
 
         # formats entry to only contain valid namess
-        _ = re.split(',|;', self._autocomplete_textbox_main.var.get())
+        _ = self._autocomplete_textbox_main._var.get().split(',')
         curr_words = [word.strip() for word in _]
 
         new_words = ''
         for word in  curr_words:
-            if word in self._autocomplete_textbox_main.autocompleteList and word:
+            if word in self._autocomplete_textbox_main._ac_list and word:
                 new_words += word + ', '
 
         # set entry to contain formated strings
-        self._autocomplete_textbox_main.var.set(new_words[:-2])
+        self._autocomplete_textbox_main._var.set(new_words)
 
-        # remove listbox if its up
-        if self._autocomplete_textbox_main.listboxUp:
-            self._autocomplete_textbox_main.listbox.destroy()
-            self._autocomplete_textbox_main.listboxUp = False
+        # remove listbox
+        self._autocomplete_textbox_main.hide_lb()
 
         # grab strings from the entry fields
         cart_numbers = self._autocomplete_textbox_main.get()
@@ -265,26 +257,24 @@ class Window:
         '''
         
         # formats entry to only contain valid names
-        _ = re.split(',|;', self._autocomplete_textbox_correct.var.get())
+        _ = self._autocomplete_textbox_correct._var.get().split(',')
         curr_words = [word.strip() for word in _]
 
         new_words = ''
         for word in  curr_words:
-            if word in self._autocomplete_textbox_correct.autocompleteList and word:
+            if word in self._autocomplete_textbox_correct._ac_list and word:
                 new_words += word + ', '
 
         # puts formated strings into the entries text field
-        self._autocomplete_textbox_correct.var.set(new_words[:-2])
-
+        self._autocomplete_textbox_correct._var.set(new_words)
+        
         # remove the listbox if it exists
-        if self._autocomplete_textbox_correct.listboxUp:
-            self._autocomplete_textbox_correct.listbox.destroy()
-            self._autocomplete_textbox_correct.listboxUp = False
+        self._autocomplete_textbox_correct.hide_lb()
 
         # read the entry and process the string
         cart_numbers_to_delete_str = self._autocomplete_textbox_correct.get()
-        cart_numbers_to_delete = re.split(',|;', cart_numbers_to_delete_str)
-        cart_numbers_to_delete = [number.strip() for number in cart_numbers_to_delete]
+        cart_numbers_to_delete = cart_numbers_to_delete_str.split(',')
+        cart_numbers_to_delete = [number.strip() for number in cart_numbers_to_delete if number.strip()]
 
         # trow warning if nothing was entered
         if not cart_numbers_to_delete_str:
@@ -324,266 +314,3 @@ class Window:
             
             else:
                 pass
-
-class AutocompleteEntry(tk.Entry):
-    '''
-    AutocompleteEntry widget, uses autocompletelist to propose cart numbers
-    
-    mouse interaction doesnt fully work use keyboard instead
-
-    create dropdown list of possible autocompletes, use arrow keys to navigate up and down, return to select
-    '''
-    def __init__(self, leave_func, autocomplete_list_source=[], *args, **kwargs):
-        '''
-        creates the widget,
-
-        machesFunction defines the function used to determine the displayed autocomplete results at any time,
-        TODO make matches function return tupel instead of string to rank the words for relevance
-        '''
-        
-        # from where to grab auto complete list, either its the list directly or its a function taking no args that generates the list
-        self._autocomplete_list_source = autocomplete_list_source
-
-        if type(self._autocomplete_list_source) is list:
-
-            # if autocomp source is a list then take that as the list it self
-            self._autocomplete_refresh = False
-            self.autocompleteList = list(dict.fromkeys(self._autocomplete_list_source)) # remove duplicates
-            
-        elif callable(elf._autocomplete_list_source):
-
-            # else if its a function use the return value as the list
-            self._autocomplete_refresh = True
-            self.autocompleteList = self._autocomplete_list_source()
-            self._last_refresh = time.time()
-
-        # Listbox length
-        if 'listboxLength' in kwargs:
-            self.listboxLength = kwargs['listboxLength']
-            del kwargs['listboxLength']
-        else:
-            self.listboxLength = 4
-
-        # Custom matches function
-        # matchesfunction has to take two words and return a boolean value b contains a
-        if 'matchesFunction' in kwargs:
-            self.matchesFunction = kwargs['matchesFunction']
-            del kwargs['matchesFunction']
-        else:
-
-            # default matches function returns true if field entry is an ordered subset of acListEntry
-            def matches(fieldValue, acListEntry):
-                pattern = re.compile('.*' + re.escape(fieldValue) + '.*', re.IGNORECASE)
-                return re.match(pattern, acListEntry)
-            
-            # set default match function
-            self.matchesFunction = matches
-        
-        # init base Entry field
-        tk.Entry.__init__(self, *args, **kwargs)
-        self.focus()
-
-        # function to leave focus
-        self.leave_func = leave_func
-        
-        # entry text
-        self.var = self["textvariable"]
-        if self.var == '':
-            self.var = self["textvariable"] = tk.StringVar()
-
-        # bind keys to functions
-        self.var.trace('w', self.changed)
-        self.bind("<Right>", self.selection)
-        self.bind("<Return>", self.leave_func)
-        self.bind("<Up>", self.moveUp)
-        self.bind("<Down>", self.moveDown)
-        
-        # dont show listbox (autocomplete list)
-        self.listboxUp = False
-
-    def set_autocomplete_list_source(self, autocomplete_list_source):
-        '''
-        to change keywords proposed by the autocomplete
-        '''
-
-        # change the source of the autocomplete list
-        self._autocomplete_list_source = autocomplete_list_source
-
-        if type(self._autocomplete_list_source) is list:
-
-            # if autocomp source is a list then take that as the list it self
-            self._autocomplete_refresh = False
-            self.autocompleteList = list(dict.fromkeys(self._autocomplete_list_source)) # remove duplicates
-
-        elif callable(self._autocomplete_list_source):
-
-            # else if its a function use the return value as the list
-            self._autocomplete_refresh = True
-            self.autocompleteList = self._autocomplete_list_source()
-            self._last_refresh = time.time()
-
-    def changed(self, name, index, mode):
-        '''
-        function called every time the contents of the Entry is changed i.e. when something is typed
-
-        causes the autocomplete list to change
-        '''
-
-        # if autocomplete refresh is True update the autocomplete list every 5 seconds
-        if self._autocomplete_refresh and time.time() - self._last_refresh > 5:
-            self._last_refresh = time.time()
-            self.autocompleteList = self._autocomplete_list_source()
-
-        # destroy the listbox if nothing is entered
-        if self.var.get() == '':
-            if self.listboxUp:
-                self.listbox.destroy()
-                self.listboxUp = False
-        else:
-
-            # generate proposed autocomplete words
-            words = self.comparison()
-
-            if words:
-
-                # show listbox with the relevant words in it
-                self.bind("<Return>", self.selection)
-
-                if not self.listboxUp:
-                    self.listbox = tk.Listbox(width=self["width"], font=self['font'], height=self.listboxLength)
-                    self.listbox.bind("<ButtonRelease-1>", self.change_selected)
-                    self.listbox.bind("<Right>", self.selection)
-                    self.listbox.place(x=self.winfo_x(), y=self.winfo_y() + self.winfo_height())
-                    self.listboxUp = True
-                
-                self.listbox.delete(0, tk.END)
-
-                # set contents of listbox
-                for w in words:
-                    self.listbox.insert(tk.END, w)
-
-            else:
-
-                # destroy listbox
-                if self.listboxUp:
-                    self.listbox.destroy()
-                    self.listboxUp = False
-        
-    def selection(self, event):
-        '''
-        event triggered when an autocomplete word is selected
-
-        pastes the autocomplete word into the Entry and adds commas inbetween the words
-
-        binds return to skipping focus to next widget
-        '''
-
-        # next time you hit return, chanage focus using leave_func
-        self.bind("<Return>", self.leave_func)
-        
-        # paste contents of the selected element of the listbox
-        # into the entry
-        if self.listboxUp:
-
-            # reformat the cart numbers already written
-            _ = re.split(',|;', self.var.get())[:-1]
-            curr_words = [word.strip() for word in _]
-
-            # add spaces after commas
-            new_words = ''
-            for word in  curr_words:
-                if word in self.autocompleteList and word:
-                    new_words += word + ', '
-
-            new_words += self.listbox.get(tk.ACTIVE)
-            self.var.set(new_words)
-
-            # close the listbox
-            self.listbox.destroy()
-            self.listboxUp = False
-            self.icursor(tk.END)
-
-        else:
-            # if listbox wasnt displayed skip to focus next wiget imediately
-            _ = re.split(',|;', self.var.get())
-            curr_words = [word.strip() for word in _]
-
-            new_words = ''
-            for word in  curr_words:
-                if word in self.autocompleteList and word:
-                    new_words += word + ', '
-
-            self.var.set(new_words[:-2])
-            self.listbox.destroy()
-            self.listboxUp = False
-
-            # switch focus
-            self.leave_func(None)
-
-    def change_selected(self, event):
-        self.focus ()
-        self.bind("<Return>", self.selection)
-
-    def moveUp(self, event):
-        '''
-        scrolling up in the autocomplete list using up arrow
-        '''
-        if self.listboxUp:
-
-            # rotate trough selected elements in the listbox
-            if self.listbox.curselection() == ():
-                index = '1'
-                self.listbox.see(index) # Scroll!
-                self.listbox.selection_set(first=index)
-                self.listbox.activate(index)
-
-            else:
-                index = self.listbox.curselection()[0]
-                
-            if index != '0':                
-                self.listbox.selection_clear(first=index)
-                index = str(int(index) - 1)
-                
-                self.listbox.see(index) # Scroll!
-                self.listbox.selection_set(first=index)
-                self.listbox.activate(index)
-
-    def moveDown(self, event):
-        '''
-        scrolling down in the autocomplete list using down arrow
-        '''
-        if self.listboxUp:
-            if self.listbox.curselection() == ():
-                index = '-1'
-                self.listbox.see(index) # Scroll!
-                self.listbox.selection_set(first=index)
-                self.listbox.activate(index)
-
-            else:
-                index = self.listbox.curselection()[0]
-                
-            if index != tk.END:                        
-                self.listbox.selection_clear(first=index)
-                index = str(int(index) + 1)
-                
-                self.listbox.see(index) # Scroll!
-                self.listbox.selection_set(first=index)
-                self.listbox.activate(index) 
-
-    def comparison(self):
-        '''
-        generate list of words to display in the autocomplete dropdown list using the matches function
-        '''
-
-        return [w for w in self.autocompleteList if self.matchesFunction(re.split(',|;', self.var.get())[-1].strip(), w)]
-    
-    def grid_forget(self):
-        '''
-        hide listbox and self
-        '''
-
-        if self.listboxUp:
-            self.listbox.destroy()
-            self.listboxLength = False
-
-        super().grid_forget()
