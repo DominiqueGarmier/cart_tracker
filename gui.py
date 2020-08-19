@@ -103,8 +103,8 @@ class Window:
             return entered_carts
 
         # define autocomplete entries
-        self._autocomplete_textbox_main = AutocompleteEntry(ac_list_source=main_autocomplete_source, leave_function=focus_to_signature_textbox, lb_length=4, width=80, font=self._lfont)
-        self._autocomplete_textbox_correct = AutocompleteEntry(ac_list_source=correct_autocomplete_source, leave_function=focus_to_correct_save_button, lb_length=2, width=80, font=self._lfont)
+        self._autocomplete_textbox_main = AutocompleteEntry(master=self._root, ac_list_source=main_autocomplete_source, leave_function=focus_to_signature_textbox, lb_length=4, width=80, font=self._lfont)
+        self._autocomplete_textbox_correct = AutocompleteEntry(master=self._root, ac_list_source=correct_autocomplete_source, leave_function=focus_to_correct_save_button, lb_length=2, width=80, font=self._lfont)
 
         # bind focus related functions to inputs
         self._signature_textbox_main.bind('<Return>', focus_to_main_save_button)
@@ -197,8 +197,9 @@ class Window:
         finally it also closes the window.
         '''
 
+        '''
         # formats entry to only contain valid namess
-        _ = self._autocomplete_textbox_main._var.get().split(',')
+        _ = self._autocomplete_textbox_main._blob_text_display.get_all_text.split(',')
         curr_words = [word.strip() for word in _]
 
         new_words = ''
@@ -208,12 +209,13 @@ class Window:
 
         # set entry to contain formated strings
         self._autocomplete_textbox_main._var.set(new_words)
+        '''
 
         # remove listbox
         self._autocomplete_textbox_main.hide_lb()
 
         # grab strings from the entry fields
-        cart_numbers = self._autocomplete_textbox_main.get()
+        cart_numbers = self._autocomplete_textbox_main._blob_text_display.get_all_text()
         signature = self._signature_textbox_main.get()
 
         # warning messages if entries arent filled properly
@@ -228,7 +230,7 @@ class Window:
 
         # if everything is entered correclty ask for confirmation
         else:
-            answer = messagebox.askokcancel("Frage", "Der/Die Wagen: " + cart_numbers + " als erledigt Speichern?")
+            answer = messagebox.askokcancel("Frage", "Der/Die Wagen: " + cart_numbers[:-2] + " als erledigt Speichern?")
 
             if answer:
 
@@ -255,7 +257,7 @@ class Window:
         then it updates the csv by deleting the chosen entries.
         finally it closes the window.
         '''
-        
+        '''
         # formats entry to only contain valid names
         _ = self._autocomplete_textbox_correct._var.get().split(',')
         curr_words = [word.strip() for word in _]
@@ -267,12 +269,12 @@ class Window:
 
         # puts formated strings into the entries text field
         self._autocomplete_textbox_correct._var.set(new_words)
-        
+        '''
         # remove the listbox if it exists
         self._autocomplete_textbox_correct.hide_lb()
 
         # read the entry and process the string
-        cart_numbers_to_delete_str = self._autocomplete_textbox_correct.get()
+        cart_numbers_to_delete_str = self._autocomplete_textbox_correct._blob_text_display.get_all_text()
         cart_numbers_to_delete = cart_numbers_to_delete_str.split(',')
         cart_numbers_to_delete = [number.strip() for number in cart_numbers_to_delete if number.strip()]
 
@@ -282,7 +284,7 @@ class Window:
 
         # ask for confirmation
         else:
-            answer = messagebox.askokcancel("Frage", "Der/Die Wagen: " + cart_numbers_to_delete_str +" aus den erledigten Wagen entfernen?")
+            answer = messagebox.askokcancel("Frage", "Der/Die Wagen: " + cart_numbers_to_delete_str[:-2] +" aus den erledigten Wagen entfernen?")
 
             if answer:
 

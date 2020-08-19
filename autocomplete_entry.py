@@ -36,12 +36,28 @@ class BlobTextDisplay(tk.Frame):
         blob = BlobText(master=self, text=text, *args, **kwargs)
         blob.pack(side=tk.LEFT, padx=1)
         self._blobs.append(blob)
-class AutocompleteEntry(tk.Entry):
+
+    def get_all_text(self):
+
+        s = ''
+        for blob in self._blobs:
+            if blob._exists:
+                s += blob._text + ', '
+        
+        return s
+
+class AutocompleteEntry(tk.Frame):
     
-    def __init__(self, ac_list_source, leave_function, lb_length, *args, **kwargs):
+    def __init__(self, master, ac_list_source, leave_function, lb_length, *args, **kwargs):
 
         # init parent obj
-        tk.Entry.__init__(self, *args, **kwargs)
+        super().__init__(master)
+
+        self._entry = tk.Entry(master=self, *args, **kwargs)
+        self._blob_text_display = BlobTextDisplay(master=self, width=50)
+
+        self._entry.grid(column=0, row=1)
+        self._blob_text_display.grid(column=0, row=0, stick=tk.W)
 
         # autocomplete list source
         self._ac_list_source = ac_list_source
@@ -64,17 +80,17 @@ class AutocompleteEntry(tk.Entry):
             raise TypeError(str(self._ac_list_source) + ' has to be either a list of a callable object that returns a list')
 
         # content of the entrys
-        self._var = self['textvariable']
+        self._var = self._entry['textvariable']
         if not self._var:
-            self._var = self['textvariable'] = tk.StringVar()
+            self._var = self._entry['textvariable'] = tk.StringVar()
 
         # track changes in self._var
         self._var.trace('w', self.changed)
 
         # map buttons
-        self.bind('<Up>', self.scroll_up)
-        self.bind('<Down>', self.scroll_down)
-        self.bind('<Return>', self._leave_function)
+        self._entry.bind('<Up>', self.scroll_up)
+        self._entry.bind('<Down>', self.scroll_down)
+        self._entry.bind('<Return>', self._leave_function)
 
         # list box is not up by default
         self._lb_up = False
@@ -94,11 +110,11 @@ class AutocompleteEntry(tk.Entry):
             # create lisbox obj
 
             self._lb_up = True
-            self._lb = tk.Listbox(width=self['width'], font=self['font'])
+            self._lb = tk.Listbox(width=self._entry['width'], font=self._entry['font'])
             self._lb.place(x = self.winfo_x(), y = self.winfo_y() + self.winfo_height())
             self._lb.bind('<Double-Button-1>', self.selection)
             self._lb.bind('<ButtonRelease-1>', self.mouse_click)
-            self.bind('<Return>', self.selection)
+            self._entry.bind('<Return>', self.selection)
 
         # shrink lb if there arent enought words
         self._lb.configure(height=min(self._lb_length, len(words)))
@@ -113,7 +129,7 @@ class AutocompleteEntry(tk.Entry):
         if self._lb_up:
             self._lb_up = False
             self._lb.destroy()
-            self.bind('<Return>', self._leave_function)
+            self._entry.bind('<Return>', self._leave_function)
 
     def changed(self, name, index, mode):
         '''
@@ -150,10 +166,17 @@ class AutocompleteEntry(tk.Entry):
                 self._ac_list = self._ac_list_source()
                 self._last_refresh = time.time()
             
-            words = [word.strip() for word in self._var.get().split(',')[:-1]]
+            # words = [word.strip() for word in self._var.get().split(',')[:-1]]
 
             if not self._lb_name_not_found:
                 
+                word = self._lb.get(tk.ACTIVE)
+                self._blob_text_display.add_blob_text(text=word, font=("Calibri", 16, "bold"))
+                self._var.set('')
+                self.hide_lb()
+                self._entry.icursor(tk.END)
+                
+                '''
                 words.append(self._lb.get(tk.ACTIVE))
                 string = ''
                 for word in words:
@@ -163,9 +186,15 @@ class AutocompleteEntry(tk.Entry):
                 self._var.set(string)
                 self.hide_lb()
                 self.icursor(tk.END)
+                '''
             
             else:
 
+                self._var.set('')
+                self.hide_lb()
+                self._entry.icursor(tk.END)
+
+                '''
                 string = ''
                 for word in words:
                     if word and word in self._ac_list:
@@ -174,6 +203,7 @@ class AutocompleteEntry(tk.Entry):
                 self._var.set(string)
                 self.hide_lb()
                 self.icursor(tk.END)
+                '''
             
     def scroll_up(self, event):
 
@@ -216,7 +246,7 @@ class AutocompleteEntry(tk.Entry):
                 self._lb.see(index)
 
     def mouse_click(self, event):
-        self.focus()
+        self._entry.focus()
 
     def ac_query(self):
 
@@ -246,16 +276,3 @@ class AutocompleteEntry(tk.Entry):
         
         self.hide_lb()
         super().grid_forget()
-
-if __name__ == '__main__':
-    root = tk.Tk()
-
-    lista = ['a', 'actions', 'additional', 'also', 'an', 'and', 'angle', 'are', 'as', 'be', 'bind', 'bracket', 'brackets', 'button', 'can', 'cases', 'configure', 'course', 'detail', 'enter', 'event', 'events', 'example', 'field', 'fields', 'for', 'give', 'important', 'in', 'information', 'is', 'it', 'just', 'key', 'keyboard', 'kind', 'leave', 'left', 'like', 'manager', 'many', 'match', 'modifier', 'most', 'of', 'or', 'others', 'out', 'part', 'simplify', 'space', 'specifier', 'specifies', 'string;', 'that', 'the', 'there', 'to', 'type', 'unless', 'use', 'used', 'user', 'various', 'ways', 'we', 'window', 'wish', 'you']
-    
-    entry = AutocompleteEntry(lista, lf, root)
-    entry.grid(row=0, column=0)
-    tk.Button(text='nothing').grid(row=1, column=0)
-    tk.Button(text='nothing').grid(row=2, column=0)
-    tk.Button(text='nothing').grid(row=3, column=0)
-
-    root.mainloop()

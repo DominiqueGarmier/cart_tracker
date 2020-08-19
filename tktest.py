@@ -35,7 +35,7 @@ class BlobTextDisplay(tk.Frame):
     def add_blob_text(self, text, *args, **kwargs):
         blob = BlobText(master=self, text=text, *args, **kwargs)
         blob.pack(side=tk.LEFT, padx=1)
-        self._blobs.append(blob)
+        print(self.winfo_width())
 
 if __name__ == '__main__':
     root = tk.Tk()
