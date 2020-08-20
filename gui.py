@@ -196,20 +196,6 @@ class Window:
         finally it also closes the window.
         '''
 
-        '''
-        # formats entry to only contain valid namess
-        _ = self._autocomplete_textbox_main._blob_text_display.get_all_text.split(',')
-        curr_words = [word.strip() for word in _]
-
-        new_words = ''
-        for word in  curr_words:
-            if word in self._autocomplete_textbox_main._ac_list and word:
-                new_words += word + ', '
-
-        # set entry to contain formated strings
-        self._autocomplete_textbox_main._var.set(new_words)
-        '''
-
         # remove listbox
         self._autocomplete_textbox_main.hide_lb()
 
@@ -222,7 +208,7 @@ class Window:
             messagebox.showwarning("Warnung", "Es wurden nicht alle Felder ausgefüllt.")
 
         elif not cart_numbers:
-            messagebox.showwarning("Warnung", "Es wurde keine (existierende) Wagennummer angegeben.")
+            messagebox.showwarning("Warnung", "Es wurde keine Wagennummer angegeben.")
             
         elif not signature:
             messagebox.showwarning("Warnung", "Es wurden keine Initialen angegeben.")
@@ -256,19 +242,7 @@ class Window:
         then it updates the csv by deleting the chosen entries.
         finally it closes the window.
         '''
-        '''
-        # formats entry to only contain valid names
-        _ = self._autocomplete_textbox_correct._var.get().split(',')
-        curr_words = [word.strip() for word in _]
-
-        new_words = ''
-        for word in  curr_words:
-            if word in self._autocomplete_textbox_correct._ac_list and word:
-                new_words += word + ', '
-
-        # puts formated strings into the entries text field
-        self._autocomplete_textbox_correct._var.set(new_words)
-        '''
+        
         # remove the listbox if it exists
         self._autocomplete_textbox_correct.hide_lb()
 
@@ -279,7 +253,7 @@ class Window:
 
         # trow warning if nothing was entered
         if not cart_numbers_to_delete_str:
-            messagebox.showwarning("Warnung", "Es wurde keine (existierende) Wagennummer angegeben.")
+            messagebox.showwarning("Warnung", "Es wurde keine Wagennummer angegeben.")
 
         # ask for confirmation
         else:
