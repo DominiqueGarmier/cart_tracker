@@ -36,7 +36,7 @@ $outputfolder = "C:\path\to\folder"
 
 $workbook = $objExcel.workbooks.open($excelfilepath, 3)
 $workbook.Saved = $true
-$datetimestr = Get-Date -Format "dd-MM-yyyy"
+$datetimestr = (get-date (get-date).addDays(-1) -UFormat "%d-%m-%y")
 
 $temp = $outputfolder + $datetimestr
 New-Item -Path $temp -ItemType Directory
