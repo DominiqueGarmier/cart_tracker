@@ -88,7 +88,12 @@ class BlobTextDisplay(tk.Frame):
         # if you need to add a new line
 
         last_frame = self._frames[-1]
+        
+        blob = BlobText(master=last_frame, display=self, text=text, *args, **kwargs)
+        blob.pack(side=tk.LEFT, padx=2, pady=2)
+        self._root.update()
 
+        #print(last_frame.winfo_width(), self._root_width)
         if last_frame.winfo_width() > self._root_width:
 
             new_frame = tk.Frame(master=self)
@@ -96,10 +101,12 @@ class BlobTextDisplay(tk.Frame):
 
             self._frames.append(new_frame)
 
-        last_frame = self._frames[-1]
-        
-        blob = BlobText(master=last_frame, display=self, text=text, *args, **kwargs)
-        blob.pack(side=tk.LEFT, padx=1, pady=1)
+            last_frame = self._frames[-1]
+
+            blob.destroy()
+            blob = BlobText(master=last_frame, display=self, text=text, *args, **kwargs)
+            blob.pack(side=tk.LEFT, padx=2, pady=2)
+
         self._blobs.append(blob)
         self._rows.append(len(self._frames) - 1)
 
@@ -112,6 +119,8 @@ class BlobTextDisplay(tk.Frame):
                 self._blobs.pop(ind)
                 self._rows.pop(ind)
 
+        self._root.update()
+
         for i, frame in enumerate(self._frames):
             while i + 1 in self._rows and frame.winfo_width() < self._root_width:
 
@@ -121,20 +130,27 @@ class BlobTextDisplay(tk.Frame):
                 temp_text = blob._text
                 temp_font = blob._font
 
-                blob.destroy()
-                blob._exists = False
 
-                new_blob = BlobText(master=frame, display=self, text=temp_text, font=temp_font)
-                new_blob.pack(side=tk.LEFT, padx=1, pady=1)
+                #print(blob.winfo_width(), self._root_width, frame.winfo_width())
+                if blob.winfo_width() < self._root_width - frame.winfo_width():
 
-                self._blobs[next_row_start] = new_blob
-                self._rows[next_row_start] = i
+                    blob.destroy()
+                    blob._exists = False
 
-                if not i + 1 in self._rows:
-                    self._frames[i + 1].destroy()
-                    self._frames.pop(i + 1)
+                    new_blob = BlobText(master=frame, display=self, text=temp_text, font=temp_font)
+                    new_blob.pack(side=tk.LEFT, padx=2, pady=2)
 
-                self._root.update()
+                    self._blobs[next_row_start] = new_blob
+                    self._rows[next_row_start] = i
+
+                    if not i + 1 in self._rows:
+                        self._frames[i + 1].destroy()
+                        self._frames.pop(i + 1)
+
+                    self._root.update()
+
+                else:
+                    break
 
     def get_all_text(self):
         '''
