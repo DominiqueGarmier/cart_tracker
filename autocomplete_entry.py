@@ -1,3 +1,14 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+#-------------------------------------------------------
+# cart tracker (c) 2020 Dominique F. Garmier MIT licence
+#-------------------------------------------------------
+
+'''
+classes for the autocomplete elements of the gui
+'''
+
+# standard library iports
 import tkinter as tk
 import time
 import re
@@ -7,10 +18,12 @@ class BlobText(tk.Frame):
     Class to display speechbubble like labels with a cross on the right side of it to remove.
     '''
 
-    def __init__(self, master, text, font=None, *args, **kwargs):
+    def __init__(self, master, display, text, font=("Calibri", 12, "bold"), *args, **kwargs):
         '''
         creates a blobtext object. The blobtext is packed to the left side of its master
         '''
+        self._master = master
+        self._display = display
 
         # trick to give frame widget a border
         kwargs['highlightbackground'] = 'black'
@@ -18,19 +31,22 @@ class BlobText(tk.Frame):
         kwargs['highlightthickness'] = 1
 
         # init frame widget
-        super().__init__(master, *args, **kwargs)
+        super().__init__(self._master, *args, **kwargs)
 
         # bool to keep track of if it was already deleted (using the x button)
         self._exists = True
 
         # create label as a child of self
+        self._font = font
         self._text = text
-        self._label = tk.Label(self, text=self._text, font=font)
+        self._label = tk.Label(self, text=self._text, font=self._font)
 
         # hide blobtext and set exists to false
         def close_func():
             self.destroy()
             self._exists = False
+
+            self._display.blob_removed()
 
         # button as a child of self to close the blob text
         self._button = tk.Button(self, text='x', relief='flat', command=close_func, font=("Calibri", 12, "bold"))
@@ -44,27 +60,109 @@ class BlobTextDisplay(tk.Frame):
     class to organize multiple blobtext objects
     '''
 
-    def __init__(self, master, *args, **kwargs):
+    def __init__(self, master, root, *args, **kwargs):
         '''
         initializes list to store blobtexts in, everything is child to a frame
         '''
         super().__init__(master, *args, **kwargs)
 
+        # create one frame for each line start with the first frame
+        first_frame = tk.Frame(master=self)
+        first_frame.grid(column=0, row=0, stick=tk.W)
+        self._frames = [first_frame]
+        
         self._blobs = []
+        self._rows = []
+        self._lines = 1
+
+        self._root = root
+        self._root_width = None
 
     def add_blob_text(self, text, *args, **kwargs):
         '''
         method to add a blobtext to a btd, the new element will be appended to the right of the previous ones
         '''
-        blob = BlobText(master=self, text=text, *args, **kwargs)
-        blob.pack(side=tk.LEFT, padx=1)
-        self._blobs.append(blob)
 
-        # check for already hidden blobs to delete them
+        # the frist time we need to check how wide the window is
+        if self._root_width is None:
+            self._root_width = self._root.winfo_width()
+
+        # get the last line
+        last_frame = self._frames[-1]
+        
+        # create a new blobtext and place it on the last line
+        blob = BlobText(master=last_frame, display=self, text=text, *args, **kwargs)
+        blob.pack(side=tk.LEFT, padx=2, pady=2)
+        self._root.update()
+
+        # if the line overflows now you need to make a new line and put the text blob there
+        if last_frame.winfo_width() > self._root_width:
+
+            new_frame = tk.Frame(master=self)
+            new_frame.grid(column=0, row=len(self._frames), stick=tk.W)
+
+            self._frames.append(new_frame)
+
+            last_frame = self._frames[-1]
+
+            # delete the old blob
+            blob.destroy()
+            blob = BlobText(master=last_frame, display=self, text=text, *args, **kwargs)
+            blob.pack(side=tk.LEFT, padx=2, pady=2)
+
+        # add the text blob to the others
+        self._blobs.append(blob)
+        self._rows.append(len(self._frames) - 1)
+
+    def blob_removed(self):
+        '''
+        method to update the postioning of textblobs in the display.
+        '''
+        
+         # check for already hidden blobs to delete them
         for blob in self._blobs:
             if not blob._exists:
-                self._blobs.remove(blob)
-                del blob
+                ind = self._blobs.index(blob)
+                self._blobs.pop(ind)
+                self._rows.pop(ind)
+
+        self._root.update()
+
+        # go through each line and check for lines which arent full
+        for i, frame in enumerate(self._frames):
+
+            # add as many blobs from the next line to the previous one until its full
+            while i + 1 in self._rows and frame.winfo_width() < self._root_width:
+
+                next_row_start = self._rows.index(i + 1)
+
+                blob = self._blobs[next_row_start]
+                temp_text = blob._text
+                temp_font = blob._font
+
+                # check that the blob you tried to move up would actually fit
+                if blob.winfo_width() < self._root_width - frame.winfo_width():
+                    
+                    # if it does fit, delete the old one and make a new one on the other line
+                    blob.destroy()
+                    blob._exists = False
+
+                    new_blob = BlobText(master=frame, display=self, text=temp_text, font=temp_font)
+                    new_blob.pack(side=tk.LEFT, padx=2, pady=2)
+
+                    self._blobs[next_row_start] = new_blob
+                    self._rows[next_row_start] = i
+
+                    # destroy empty lines
+                    if not i + 1 in self._rows:
+                        self._frames[i + 1].destroy()
+                        self._frames.pop(i + 1)
+
+                    # update to be able to get the new width
+                    self._root.update()
+
+                else:
+                    break
 
     def get_all_text(self):
         '''
@@ -97,7 +195,7 @@ class AutocompleteEntry(tk.Frame):
         self._entry = tk.Entry(master=self, *args, **kwargs)
 
         # the btd
-        self._blob_text_display = BlobTextDisplay(master=self, width=50)
+        self._blob_text_display = BlobTextDisplay(master=self, root=master)
 
         # align them on top of each other #TODO perhaps better alternatives
         self._entry.grid(column=0, row=1)
@@ -166,6 +264,9 @@ class AutocompleteEntry(tk.Frame):
         # if lb is already up, only update the contents
         # first remove old words, then add the new ones
         self._lb.delete(0, tk.END)
+
+        # remove multiples
+        words = list(dict.fromkeys(words))
         for word in words:
             self._lb.insert(tk.END, word)
 
