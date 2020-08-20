@@ -12,8 +12,6 @@ all gui related classes for cart tracker
 import re
 import time
 import os
-
-# 3rd party imports
 import tkinter as tk
 from tkinter import ttk
 from tkinter import messagebox
