@@ -264,6 +264,9 @@ class AutocompleteEntry(tk.Frame):
         # if lb is already up, only update the contents
         # first remove old words, then add the new ones
         self._lb.delete(0, tk.END)
+
+        # remove multiples
+        words = list(dict.fromkeys(words))
         for word in words:
             self._lb.insert(tk.END, word)
 
