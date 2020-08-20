@@ -66,10 +66,11 @@ class BlobTextDisplay(tk.Frame):
         '''
         super().__init__(master, *args, **kwargs)
 
+        # create one frame for each line start with the first frame
         first_frame = tk.Frame(master=self)
         first_frame.grid(column=0, row=0, stick=tk.W)
         self._frames = [first_frame]
-
+        
         self._blobs = []
         self._rows = []
         self._lines = 1
@@ -82,18 +83,19 @@ class BlobTextDisplay(tk.Frame):
         method to add a blobtext to a btd, the new element will be appended to the right of the previous ones
         '''
 
+        # the frist time we need to check how wide the window is
         if self._root_width is None:
             self._root_width = self._root.winfo_width()
 
-        # if you need to add a new line
-
+        # get the last line
         last_frame = self._frames[-1]
         
+        # create a new blobtext and place it on the last line
         blob = BlobText(master=last_frame, display=self, text=text, *args, **kwargs)
         blob.pack(side=tk.LEFT, padx=2, pady=2)
         self._root.update()
 
-        #print(last_frame.winfo_width(), self._root_width)
+        # if the line overflows now you need to make a new line and put the text blob there
         if last_frame.winfo_width() > self._root_width:
 
             new_frame = tk.Frame(master=self)
@@ -103,14 +105,19 @@ class BlobTextDisplay(tk.Frame):
 
             last_frame = self._frames[-1]
 
+            # delete the old blob
             blob.destroy()
             blob = BlobText(master=last_frame, display=self, text=text, *args, **kwargs)
             blob.pack(side=tk.LEFT, padx=2, pady=2)
 
+        # add the text blob to the others
         self._blobs.append(blob)
         self._rows.append(len(self._frames) - 1)
 
     def blob_removed(self):
+        '''
+        method to update the postioning of textblobs in the display.
+        '''
         
          # check for already hidden blobs to delete them
         for blob in self._blobs:
@@ -121,7 +128,10 @@ class BlobTextDisplay(tk.Frame):
 
         self._root.update()
 
+        # go through each line and check for lines which arent full
         for i, frame in enumerate(self._frames):
+
+            # add as many blobs from the next line to the previous one until its full
             while i + 1 in self._rows and frame.winfo_width() < self._root_width:
 
                 next_row_start = self._rows.index(i + 1)
@@ -130,10 +140,10 @@ class BlobTextDisplay(tk.Frame):
                 temp_text = blob._text
                 temp_font = blob._font
 
-
-                #print(blob.winfo_width(), self._root_width, frame.winfo_width())
+                # check that the blob you tried to move up would actually fit
                 if blob.winfo_width() < self._root_width - frame.winfo_width():
-
+                    
+                    # if it does fit, delete the old one and make a new one on the other line
                     blob.destroy()
                     blob._exists = False
 
@@ -143,10 +153,12 @@ class BlobTextDisplay(tk.Frame):
                     self._blobs[next_row_start] = new_blob
                     self._rows[next_row_start] = i
 
+                    # destroy empty lines
                     if not i + 1 in self._rows:
                         self._frames[i + 1].destroy()
                         self._frames.pop(i + 1)
 
+                    # update to be able to get the new width
                     self._root.update()
 
                 else:
