@@ -18,6 +18,7 @@ import tkinter as tk
 from tkinter import ttk
 from tkinter import messagebox
 
+# local imports
 from classes import IOHandler
 from autocomplete_entry import AutocompleteEntry
 

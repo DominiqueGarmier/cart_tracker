@@ -1,3 +1,14 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+#-------------------------------------------------------
+# cart tracker (c) 2020 Dominique F. Garmier MIT licence
+#-------------------------------------------------------
+
+'''
+classes for the autocomplete elements of the gui
+'''
+
+# standard library iports
 import tkinter as tk
 import time
 import re
