@@ -31,8 +31,8 @@ function Select-Nth {
 <#
 here you need to specify the paths to the excelfile, and the outputfolder where it will create a subfolder everyday.
 #>
-$excelfilepath = "C:\Users\Domig\Desktop\excel file save test\excelfiles\Touren Suaberwagen New.xlsx"
-$outputfolder = "C:\Users\Domig\Desktop\excel file save test\excelfiles\"
+$excelfilepath = "C:\path\to\file"
+$outputfolder = "C:\path\to\folder"
 
 $workbook = $objExcel.workbooks.open($excelfilepath, 3)
 $workbook.Saved = $true
