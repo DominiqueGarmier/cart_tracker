@@ -16,17 +16,44 @@ $ pip install -r requirements.txt
 ````
 It is also advised that you add [Python](https://python.org) to your PATH. Else you would need to adjust all the *.bat and *.vbs files. Since in their current state, they rely on PATH.
 
-Next we should take a look at the [config.ini](./config.ini) file:
+If there is no [config.ini](./config.ini) file, run the main.py script once to generate it. It will close down immediately.
 
 ````
+$ python main.py
+config.ini generated!
+````
+
+Next take a look at the [config.ini](./config.ini) file:
+
+````
+# config.ini
+
 [DEFAULT]
 data_path = ./data.csv
 debug = False
+
+[ExcelToPdf]
+pdf_folder_path = path/to/folder/
+excel_file_path = path/to/fild.xlsx
+excel_sheets = [1, 2]
+pdf_names = ['sheet-1', 'sheet-2']
 ````
 
-The option ````data_path```` is to specify where you want to store the raw data. In our inteded usecase this would be a remote map drive.
+- The section ````[DEFAULT]```` contains all the settings needed for the main application ie the the gui application.
 
-The ````debug```` option makes python print out entries and some other minor messages.
+    - The option ````data_path```` is to specify where you want to store the raw data. In our inteded usecase this would be a remote map drive.
+    - The ````debug```` option makes python print out entries and some other minor messages.
+
+- The section ````[ExcelToPdf]```` contains all settings for the script to export the excel files automatically once a day.
+
+    - ````pdf_folder_path```` specifies the folder in which the *.pdf files will be saved every day
+    - ````excel_file_patj```` sets the path to the *.xlsx file.
+    - ````excel_sheets```` is a list of indices that specifies which sheet of the *.xlsx file should be exported.
+    - ````pdf_names```` is a list of strings defining how those exported *.pdf files should be called. Each sheet having a different name.
+
+
+
+
 
 For this specific usecase we want our *.csv file to be cleared once per day to reset the states of all the carts. for this there exists the [delete_data.bat](./delete_data.bat) which intern runs the [delete_data.py](./delete_data.py) file.Here we can use the built in windows Task-Scheduler, or alternatively on unix a cron task, to trigger the *.bat file once per day.
 

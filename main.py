@@ -34,14 +34,17 @@ else:
     }
 
     config['ExcelToPdf'] = {
-        'pdf_folder_path':'./pdfs',
-        'excel_file_path':'../file.xlsx',
+        'pdf_folder_path':'path/to/folder/',
+        'excel_file_path':'path/to/fild.xlsx',
         'excel_sheets':[1,2],
-        'pdf_names':['Tour-1', 'Tour-2']
+        'pdf_names':['sheet-1', 'sheet-2']
     }
 
     with open(config_path, 'w') as configfile:
         config.write(configfile)
+
+    print('config.ini generated!')
+    exit()
 
 # read form config to set constants
 data_path = config['DEFAULT']['data_path']
