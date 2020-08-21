@@ -3,7 +3,7 @@ by [Dominique Garmier](https://github.com/dominiquegarmier) (c) 2020
 
 App developed for the Kantonsspital Aarau, to track the status of laundry carts.
 
-The App ist meant to be used by the employees to check-off certain carts as "Done" once they are loaded. The Information about all the carts is then written to a remote CSV file which can be read in real-time by an excel sheet.
+The app ist meant to be used by the employees to check-off certain carts as "Done" once they are loaded. The Information about all the carts is then written to a remote CSV file which can be read in real-time by an excel sheet.
 
 ## How to install
 
@@ -55,7 +55,7 @@ pdf_names = ['sheet-1', 'sheet-2']
 
 
 
-For this specific usecase we want our *.csv file to be cleared once per day to reset the states of all the carts. for this there exists the [delete_data.bat](./delete_data.bat) which intern runs the [delete_data.py](./delete_data.py) file.Here we can use the built in windows Task-Scheduler, or alternatively on unix a cron task, to trigger the *.bat file once per day.
+For this specific usecase we want our *.csv file to be cleared once per day to reset the states of all the carts. for this there exists the [daily_task.bat](./daily_task.bat) which intern runs the [daily_task.py](./daily_task.py) file. Here we can use the built in windows Task-Scheduler, or alternatively on unix a cron task, to trigger the *.bat file once per day.
 
 Now finally create a shortcut of the [cart_tracker.vbs](./cart_tracker.vbs). This will be primary way to start the programm.
 
