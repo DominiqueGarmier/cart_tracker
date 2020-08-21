@@ -35,7 +35,7 @@ else:
 
     config['ExcelToPdf'] = {
         'pdf_folder_path':'path/to/folder/',
-        'excel_file_path':'path/to/fild.xlsx',
+        'excel_file_path':'path/to/file.xlsx',
         'excel_sheets':[1,2],
         'pdf_names':['sheet-1', 'sheet-2']
     }
