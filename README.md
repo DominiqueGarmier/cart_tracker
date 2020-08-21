@@ -16,7 +16,7 @@ $ pip install -r requirements.txt
 ````
 It is also advised that you add [Python](https://python.org) to your PATH. Else you would need to adjust all the *.bat and *.vbs files. Since in their current state, they rely [Python](https://python.org) being in PATH.
 
-If there is no [config.ini](./config.ini) file, run the main.py script once to generate it. It will close down immediately.
+If there is no [config.ini](./config.ini) file, run the [main.py](./main.py) script once to generate it. It will close down immediately.
 
 ````
 $ python main.py
