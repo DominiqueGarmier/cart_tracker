@@ -43,8 +43,8 @@ Die *.xlsx- und *.csv-Datei wurde auf dem NAS unter dem Pfad ````U:\ksakleider\W
 ```
 Damit in der *.xlsx-Datei die Angaben immer aktuell sind wurde data.csv als live "Data Source" Verknüpft.
 
-Im unterordner ````Tagesabschluss```` wird jeden Tag einen neuen Ordner erstellt mit dem jeweiligen Datum als Name, welcher zwei *.pdf-Dateien enthält. Diese beiden Dateien zeigen den Endzustand der *.xlsx-Datei am Ende des Tages.
+Im Unterordner ````Tagesabschluss```` wird jeden Tag einen neuen Ordner erstellt mit dem jeweiligen Datum als Name, welcher zwei *.pdf-Dateien enthält. Diese beiden Dateien zeigen den Endzustand der *.xlsx-Datei am Ende des Tages.
 
 ## Windows-Task-Scheduler
 
-Damit die data.csv-Datei jeden Tag richtig zurückgesetzt wird, wurde eine Windows-Aufgabe geplant, welche jeden Morgen um 6 Uhr die [daily_task.bat](./daily_task.bat) ausführt. Diese Datei speichert zuerst die *.xlsx-Datei als *.pdf ab und löscht schliesslich die Einträge in der *.csv-Datei. 
+Damit die data.csv-Datei jeden Tag richtig zurückgesetzt wird, wurde eine Windows-Aufgabe geplant, welche jeden Morgen um 6 Uhr die [daily_task.bat](./daily_task.bat)-Datei ausführt. Diese Datei speichert zuerst die *.xlsx-Datei als *.pdf ab und löscht schliesslich die Einträge in der *.csv-Datei. 
