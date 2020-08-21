@@ -9,12 +9,12 @@ The App ist meant to be used by the employees to check-off certain carts as "Don
 
 [cart_tracker](https://github.com/dominiquegarmier/cart_tracker) only works for Windows (10). It can however be adapted for unix use. Namely by replacing the *.bat and *.vbs files with their respective unix counterparts.
 
-First off [Python 3.8](https://python.org) or later needs to be installed. Using ````pip```` you can install the required packages the following way:
+First off [Python 3.8](https://python.org) or later needs to be installed alongside the required packages. Using ````pip```` you can install the required packages the following way:
 
 ````
 $ pip install -r requirements.txt
 ````
-It is also advised that you add [Python](https://python.org) to your PATH. Else you would need to adjust all the *.bat and *.vbs files. Since in their current state, they rely on PATH.
+It is also advised that you add [Python](https://python.org) to your PATH. Else you would need to adjust all the *.bat and *.vbs files. Since in their current state, they rely [Python](https://python.org) being in PATH.
 
 If there is no [config.ini](./config.ini) file, run the main.py script once to generate it. It will close down immediately.
 
@@ -39,7 +39,7 @@ excel_sheets = [1, 2]
 pdf_names = ['sheet-1', 'sheet-2']
 ````
 
-- The section ````[DEFAULT]```` contains all the settings needed for the main application ie the the gui application.
+- The section ````[DEFAULT]```` contains all the settings needed for the main application i.e. the the gui application.
 
     - The option ````data_path```` is to specify where you want to store the raw data. In our inteded usecase this would be a remote map drive.
     - The ````debug```` option makes python print out entries and some other minor messages.
@@ -57,9 +57,11 @@ pdf_names = ['sheet-1', 'sheet-2']
 
 For this specific usecase we want our *.csv file to be cleared once per day to reset the states of all the carts. for this there exists the [delete_data.bat](./delete_data.bat) which intern runs the [delete_data.py](./delete_data.py) file.Here we can use the built in windows Task-Scheduler, or alternatively on unix a cron task, to trigger the *.bat file once per day.
 
+Now finally create a shortcut of the [cart_tracker.vbs](./cart_tracker.vbs). This will be primary way to start the programm.
+
 ## How to use
 
-Click the shortcut you created, a window will pop up prompting you to enter one or more cart numbers separated by commas. An autocomplete dropdown menu will help you type the cartnames correctly. Use the Arrow and Return keys to navigate. The autocompletet entry will only allow you to type valid names i.e. those in the cart_names.txt file.
+Click on the shortcut you just created, a window will appear prompting you to enter cart numbers. You can use the autocomplete search to find valid cart names. You can select a cart name form the dropdown by either navigating to it using the arrow keys and then hitting the return or by double clicking it with your mouse. The Selected cart names will show up at the top. If you change your mind and afterall dont want to add a certain cart you can hit the X button next to the cart name to remove it.
 
 To navigate between textfields hit the return button. Depending on the context you may need to hit the return button more than once (to select the entry in the autocompletet and then to skip ahead)
 
