@@ -241,6 +241,7 @@ class AutocompleteEntry(tk.Frame):
             self, master, ac_list_source,
             leave_function, lb_length,
             no_clear_if_kw_match=True,
+            show_kw_in_lb=True,
             *args, **kwargs
             ):
         '''
@@ -302,8 +303,9 @@ class AutocompleteEntry(tk.Frame):
 
         # clear the search field when a word is searched by exact match
         self._no_clear_if_kw_match = no_clear_if_kw_match
+        self._show_kw_in_lb = show_kw_in_lb
 
-    def show_lb(self, words):
+    def show_lb(self, words, key_words={}):
         '''
         creates or updates listbox
         '''
@@ -368,8 +370,9 @@ class AutocompleteEntry(tk.Frame):
 
         # show lb if entry is not empty
         else:
-            if words := self.ac_query():
-                self.show_lb(words)
+            words, kws = self.ac_query()
+            if words:
+                self.show_lb(words, kws)
                 self._lb_name_not_found = False
 
             # hide lb if there are not ac matches
@@ -402,13 +405,13 @@ class AutocompleteEntry(tk.Frame):
                 self.hide_lb()
                 self._entry.icursor(tk.END)
 
-                words = self.ac_query(duplicates=True)
+                words, _ = self.ac_query(duplicates=True)
                 kw_match = words[word]
 
-                words = self.ac_query()
+                words, kws = self.ac_query()
                 if self._no_clear_if_kw_match and kw_match and words:
 
-                    self.show_lb(words)
+                    self.show_lb(words, kws)
 
                 else:
 
@@ -527,29 +530,29 @@ class AutocompleteEntry(tk.Frame):
         # a bool saying if the match was triggered by a direct match
         # or a keyword match
         matches = {}
+        matches_with_kw = {}
         for w in self._ac_list:
 
             # dont show words already in blob text
-            if w[0] in self._blob_text_display._all_words and not duplicates:
+            if w in self._blob_text_display._all_words and not duplicates:
                 continue
 
+            if re.match(pattern, w):
+                matches[w] = False
+                matches_with_kw[w] = self._ac_list[w]
+
             pattern_match = False
+            for kw in self._ac_list[w]:
 
-            if re.match(pattern, w[0]):
-                matches[w[0]] = False
+                if re.match(pattern, kw):
+                    pattern_match = True
+                    break
 
-            else:
+            if pattern_match:
+                matches[w] = True
+                matches_with_kw[w] = self._ac_list[w]
 
-                for kw in w[1:]:
-
-                    if re.match(pattern, kw):
-                        pattern_match = True
-                        break
-
-                if pattern_match:
-                    matches[w[0]] = True
-
-        return matches
+        return matches, matches_with_kw
 
     def grid_forget(self):
         '''
