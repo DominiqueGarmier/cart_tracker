@@ -78,3 +78,17 @@ If you want to remove an entry you falsely entered, you can hit the "Korrektur" 
 ````
 $ python udate.py
 ````
+
+If you ever want to add new cart numbers to the autocomplete results, you can click the highlighted text at the bottom right of the window. It will open a the [cart_names.txt](./cart_names.txt) file using the default editor. The file will look something along the lines of:
+
+
+````
+.
+.
+cart name, keywords, ...
+another cart, some, more, keywords, ...
+.
+.
+````
+
+Each line represents a cart. The first entry of the line is the name of the cart followed by the keywords by which it can be found aswell (using the autocomplete).
