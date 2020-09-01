@@ -1,9 +1,10 @@
 
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-#-------------------------------------------------------
+# ------------------------------------------------------
 # cart tracker (c) 2020 Dominique F. Garmier MIT licence
-#-------------------------------------------------------
+# ------------------------------------------------------
+# flake8: noqa
 
 '''
 script to export excel file as pdf
@@ -16,6 +17,7 @@ import subprocess
 # local imports
 import main
 
+
 def get_strings(sheet_numbers, sheet_names):
 
     sheet_numbers_str = ''
@@ -26,7 +28,7 @@ def get_strings(sheet_numbers, sheet_names):
 
     sheet_names_str = ''
     for name in sheet_names:
-        sheet_names_str +='"' + name + '"' + ', '
+        sheet_names_str += '"' + name + '"' + ', '
 
     sheet_names_str = sheet_names_str[:-2]
 
@@ -38,6 +40,7 @@ def get_strings(sheet_numbers, sheet_names):
 
     return sheet_numbers_str, sheet_names_str, inds
 
+
 def get_path(file_path, folder_path):
 
     file_path = file_path.replace('/', '\\')
@@ -45,15 +48,19 @@ def get_path(file_path, folder_path):
 
     return file_path, folder_path
 
+
 if __name__ == '__main__':
     sheet_numbers = main.excel_sheets
     sheet_names = main.pdf_names
     file_path = main.excel_file_path
-    folder_path =  main.pdf_folder_path
+    folder_path = main.pdf_folder_path
 
-
-    sheet_numbers, sheet_names, inds = get_strings(sheet_numbers, sheet_names)
-    file_path, folder_path = get_path(file_path, folder_path)
+    sheet_numbers, sheet_names, inds = get_strings(
+        sheet_numbers, sheet_names
+        )
+    file_path, folder_path = get_path(
+        file_path, folder_path
+        )
 
     cmd = '''
     $xlFixedFormat = "Microsoft.Office.Interop.Excel.xlFixedFormatType" -as [type]
@@ -107,12 +114,12 @@ if __name__ == '__main__':
 
     $temp = $sheetnames | Select-Nth $ind
     $pdfpath = $outputpath + $temp + ".pdf"
-    
+
     $temp = $sheetnumbers | Select-Nth $ind
     $worksheet = $workbook.Worksheets($temp)
     $worksheet.PageSetup.Zoom = $false
     $worksheet.ExportAsFixedFormat($xlFixedFormat::xlTypePDF, $pdfpath, $xlQualityStandard, $true, $true)
-    
+
     }}
 
     $objExcel.Workbooks.close()
@@ -133,7 +140,7 @@ if __name__ == '__main__':
         script_path = os.path.abspath('./temp.ps1')
         subprocess.call('Powershell -Command {}'.format(script_path))
 
-    except:
-        print('F')
+    except:  # noqa
+        print('failed')
 
     os.remove('./temp.ps1')
