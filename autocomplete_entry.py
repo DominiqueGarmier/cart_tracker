@@ -416,7 +416,8 @@ class AutocompleteEntry(tk.Frame):
 
             else:
 
-                # if there is no matching word in the ac list, then just empty the search box
+                # if there is no matching word in the ac list, then just
+                # empty the search box
                 self._var.set('')
                 self.hide_lb()
                 self._entry.icursor(tk.END)
@@ -448,7 +449,8 @@ class AutocompleteEntry(tk.Frame):
                 self._lb.select_set(first=index)
                 self._lb.activate(index)
 
-                # make sure the lb scrolls if you reach the top of the screen but not the top of the list
+                # make sure the lb scrolls if you reach the top of the screen
+                # but not the top of the list
                 self._lb.see(index)
 
     def scroll_down(self, event):
@@ -459,7 +461,8 @@ class AutocompleteEntry(tk.Frame):
         # only scrll if the lb is up
         if self._lb_up:
 
-            # if there is no selected element start at index -1 (so that when you scroll it goes to 0)
+            # if there is no selected element start at index -1
+            # (so that when you scroll it goes to 0)
             if self._lb.curselection() == ():
 
                 index = '-1'
@@ -478,12 +481,14 @@ class AutocompleteEntry(tk.Frame):
                 self._lb.select_set(first=index)
                 self._lb.activate(index)
 
-                # have the lb scroll if you reach the bottom of the screen but not the lb
+                # have the lb scroll if you reach the bottom of
+                # the screen but not the lb
                 self._lb.see(index)
 
     def mouse_click(self, event):
         '''
-        handle the special chase of a mousclick selecting a word from the list, to refocus on the entry
+        handle the special chase of a mousclick selecting a word from the list,
+        to refocus on the entry
         '''
         self._entry.focus()
 
@@ -499,7 +504,7 @@ class AutocompleteEntry(tk.Frame):
 
         # only autocompletet the last word in a series of comma separated words
         last_word = self._var.get().split(',')[-1].strip()
-        
+
         # escape all regex sensitive characters
         regex_chars = '[](){}*+?|^$.\\'
 
@@ -511,7 +516,7 @@ class AutocompleteEntry(tk.Frame):
                 _ += letter
 
         last_word = _
-        
+
         # parse using regex to find matches
         pattern = re.compile('.*' + last_word + '.*', re.IGNORECASE)
 
@@ -534,9 +539,9 @@ class AutocompleteEntry(tk.Frame):
                 matches[w[0]] = False
 
             else:
-                
+
                 for kw in w[1:]:
-                    
+
                     if re.match(pattern, kw):
                         pattern_match = True
                         break
@@ -545,7 +550,6 @@ class AutocompleteEntry(tk.Frame):
                     matches[w[0]] = True
 
         return matches
-        #return [w[0] for w in self._ac_list if re.match(pattern, w[0])]
 
     def grid_forget(self):
         '''
