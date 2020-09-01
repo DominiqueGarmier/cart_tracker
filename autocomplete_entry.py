@@ -341,6 +341,17 @@ class AutocompleteEntry(tk.Frame):
         # remove multiples
         words = list(dict.fromkeys(words))
         for word in words:
+            if self._show_kw_in_lb and word in key_words and key_words[word]:
+                key_words_ = key_words[word]
+
+                string = ''
+                for key_word in key_words_:
+                    string += ', ' + key_word
+
+                string = string[2:]
+
+                word += ' (' + string + ')'
+
             self._lb.insert(tk.END, word)
 
     def hide_lb(self):
@@ -394,7 +405,9 @@ class AutocompleteEntry(tk.Frame):
 
                 # grab the text out of the btd, since its already formated
                 # and correct there is for checking like in older version
-                word = self._lb.get(tk.ACTIVE)
+                word_raw = self._lb.get(tk.ACTIVE)
+                word = word_raw.split('(')[0].strip()
+
                 self._blob_text_display.add_blob_text(
                     text=word,
                     font=("Calibri", 16, "bold")

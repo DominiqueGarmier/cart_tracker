@@ -120,7 +120,7 @@ class Window:
 
         # wrap the cart names in a list of lists
         entered_carts = {
-            i: [] for i in self._io_handler._data._df.get('cart_number').to_list()[1:]
+            i: [] for i in self._io_handler._data._df.get('cart_number').to_list()[1:]  # noqa
         }
 
         # autocomplete source functions
