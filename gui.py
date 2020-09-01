@@ -1,4 +1,4 @@
-# !/usr/bin/env python
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 # ------------------------------------------------------
 # cart tracker (c) 2020 Dominique F. Garmier MIT licence
@@ -268,7 +268,7 @@ class Window:
             messagebox.showwarning(
                 "Warnung", "Es wurde keine Wagennummer angegeben."
                 )
-    
+
         elif not signature:
             messagebox.showwarning(
                 "Warnung", "Es wurden keine Initialen angegeben."

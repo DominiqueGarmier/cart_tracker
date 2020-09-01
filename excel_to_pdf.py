@@ -1,9 +1,10 @@
 
-# !/usr/bin/env python
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 # ------------------------------------------------------
 # cart tracker (c) 2020 Dominique F. Garmier MIT licence
 # ------------------------------------------------------
+# flake8: noqa
 
 '''
 script to export excel file as pdf
@@ -113,12 +114,12 @@ if __name__ == '__main__':
 
     $temp = $sheetnames | Select-Nth $ind
     $pdfpath = $outputpath + $temp + ".pdf"
-    
+
     $temp = $sheetnumbers | Select-Nth $ind
     $worksheet = $workbook.Worksheets($temp)
     $worksheet.PageSetup.Zoom = $false
     $worksheet.ExportAsFixedFormat($xlFixedFormat::xlTypePDF, $pdfpath, $xlQualityStandard, $true, $true)
-    
+
     }}
 
     $objExcel.Workbooks.close()
@@ -139,7 +140,7 @@ if __name__ == '__main__':
         script_path = os.path.abspath('./temp.ps1')
         subprocess.call('Powershell -Command {}'.format(script_path))
 
-    except:
-        print('F')
+    except:  # noqa
+        print('failed')
 
     os.remove('./temp.ps1')
