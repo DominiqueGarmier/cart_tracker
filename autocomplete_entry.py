@@ -13,14 +13,22 @@ import tkinter as tk
 import time
 import re
 
+
 class BlobText(tk.Frame):
     '''
-    Class to display speechbubble like labels with a cross on the right side of it to remove.
+    Class to display speechbubble like labels with a cross on
+    the right side of it to remove.
     '''
 
-    def __init__(self, master, display, text, font=("Calibri", 12, "bold"), *args, **kwargs):
+    def __init__(
+            self, master, display, text,
+            font=("Calibri", 12, "bold"),
+            *args, **kwargs
+            ):
+
         '''
-        creates a blobtext object. The blobtext is packed to the left side of its master
+        creates a blobtext object. The blobtext is packed to the
+        left side of its master
         '''
         self._master = master
         self._display = display
@@ -49,11 +57,16 @@ class BlobText(tk.Frame):
             self._display.blob_removed()
 
         # button as a child of self to close the blob text
-        self._button = tk.Button(self, text='x', relief='flat', command=close_func, font=("Calibri", 12, "bold"))
+        self._button = tk.Button(
+            self, text='x', relief='flat',
+            command=close_func,
+            font=("Calibri", 12, "bold")
+            )
 
         # grid alignment iside of the the frame
         self._label.grid(column=0, row=0)
         self._button.grid(column=1, row=0)
+
 
 class BlobTextDisplay(tk.Frame):
     '''
@@ -70,7 +83,7 @@ class BlobTextDisplay(tk.Frame):
         first_frame = tk.Frame(master=self)
         first_frame.grid(column=0, row=0, stick=tk.W)
         self._frames = [first_frame]
-        
+
         self._blobs = []
         self._rows = []
         self._lines = 1
@@ -81,7 +94,8 @@ class BlobTextDisplay(tk.Frame):
 
     def add_blob_text(self, text, *args, **kwargs):
         '''
-        method to add a blobtext to a btd, the new element will be appended to the right of the previous ones
+        method to add a blobtext to a btd, the new element
+        will be appended to the right of the previous ones
         '''
 
         # the frist time we need to check how wide the window is
@@ -90,13 +104,19 @@ class BlobTextDisplay(tk.Frame):
 
         # get the last line
         last_frame = self._frames[-1]
-        
+
         # create a new blobtext and place it on the last line
-        blob = BlobText(master=last_frame, display=self, text=text, *args, **kwargs)
+        blob = BlobText(
+            master=last_frame,
+            display=self, text=text,
+            *args, **kwargs
+            )
+
         blob.pack(side=tk.LEFT, padx=2, pady=2)
         self._root.update()
 
-        # if the line overflows now you need to make a new line and put the text blob there
+        # if the line overflows now you need to make a new line and put the
+        # text blob there
         if last_frame.winfo_width() > self._root_width:
 
             new_frame = tk.Frame(master=self)
@@ -108,7 +128,11 @@ class BlobTextDisplay(tk.Frame):
 
             # delete the old blob
             blob.destroy()
-            blob = BlobText(master=last_frame, display=self, text=text, *args, **kwargs)
+            blob = BlobText(
+                master=last_frame,
+                display=self, text=text,
+                *args, **kwargs
+                )
             blob.pack(side=tk.LEFT, padx=2, pady=2)
 
         # add the text blob to the others
@@ -122,8 +146,8 @@ class BlobTextDisplay(tk.Frame):
         '''
         method to update the postioning of textblobs in the display.
         '''
-        
-         # check for already hidden blobs to delete them
+
+        # check for already hidden blobs to delete them
         for blob in self._blobs:
             if not blob._exists:
                 ind = self._blobs.index(blob)
@@ -132,13 +156,16 @@ class BlobTextDisplay(tk.Frame):
 
         self._root.update()
         self._all_words = self.get_all_words()
-        
 
         # go through each line and check for lines which arent full
         for i, frame in enumerate(self._frames):
 
-            # add as many blobs from the next line to the previous one until its full
-            while i + 1 in self._rows and frame.winfo_width() < self._root_width:
+            # add as many blobs from the next line to the previous
+            # one until its full
+            while (
+                    i + 1 in self._rows and
+                    frame.winfo_width() < self._root_width
+                    ):
 
                 next_row_start = self._rows.index(i + 1)
 
@@ -148,12 +175,18 @@ class BlobTextDisplay(tk.Frame):
 
                 # check that the blob you tried to move up would actually fit
                 if blob.winfo_width() < self._root_width - frame.winfo_width():
-                    
-                    # if it does fit, delete the old one and make a new one on the other line
+
+                    # if it does fit, delete the old one and make a new one
+                    # on the other line
                     blob.destroy()
                     blob._exists = False
 
-                    new_blob = BlobText(master=frame, display=self, text=temp_text, font=temp_font)
+                    new_blob = BlobText(
+                        master=frame,
+                        display=self,
+                        text=temp_text,
+                        font=temp_font
+                        )
                     new_blob.pack(side=tk.LEFT, padx=2, pady=2)
 
                     self._blobs[next_row_start] = new_blob
@@ -172,14 +205,15 @@ class BlobTextDisplay(tk.Frame):
 
     def get_all_text(self):
         '''
-        concatenate all the strings inside all the blobtexts in a format compatible with previous iterations
+        concatenate all the strings inside all the blobtexts in a format
+        compatible with previous iterations
         '''
 
         s = ''
         for blob in self._blobs:
             if blob._exists:
                 s += blob._text + ', '
-        
+
         return s
 
     def get_all_words(self):
@@ -194,16 +228,24 @@ class BlobTextDisplay(tk.Frame):
 
         return words
 
+
 class AutocompleteEntry(tk.Frame):
     '''
-    new autocomplete entry class, it has a search field where you can search for terms inside of an autocomplete list
-    when selected using either Return or Double LMB the term is added to a blobtextdisplay, where each term
-    is shown as a bubble which can be deleted with a cross next to it
+    new autocomplete entry class, it has a search field where you can search
+    for terms inside of an autocomplete when selected using either Return or
+    Double LMB the term is added to a blobtextdisplay, where each term is
+    shown as a bubble which can be deleted with a cross next to it
     '''
-    
-    def __init__(self, master, ac_list_source, leave_function, lb_length, no_clear_if_kw_match=True, *args, **kwargs):
+
+    def __init__(
+            self, master, ac_list_source,
+            leave_function, lb_length,
+            no_clear_if_kw_match=True,
+            *args, **kwargs
+            ):
         '''
-        initalizes the autocomplete entry and blob text display, aligning everything relative to a Frame
+        initalizes the autocomplete entry and blob text display,
+        aligning everything relative to a Frame
         '''
 
         # init parent obj
@@ -237,7 +279,7 @@ class AutocompleteEntry(tk.Frame):
             self._last_refresh = time.time()
         
         else:
-            raise TypeError(str(self._ac_list_source) + ' has to be either a list of a callable object that returns a list')
+            raise TypeError(str(self._ac_list_source) + ' has to be either a list of a callable object that returns a list') # noqa
 
         # content of the entrys
         self._var = self._entry['textvariable']
@@ -260,7 +302,6 @@ class AutocompleteEntry(tk.Frame):
 
         # clear the search field when a word is searched by exact match
         self._no_clear_if_kw_match = no_clear_if_kw_match
-        
 
     def show_lb(self, words):
         '''
@@ -273,8 +314,17 @@ class AutocompleteEntry(tk.Frame):
             # create lisbox obj
             # bind buttons
             self._lb_up = True
-            self._lb = tk.Listbox(width=self._entry['width'], font=self._entry['font'])
-            self._lb.place(x = self.winfo_x(), y = self.winfo_y() + self.winfo_height())
+
+            self._lb = tk.Listbox(
+                width=self._entry['width'],
+                font=self._entry['font']
+                )
+
+            self._lb.place(
+                x=self.winfo_x(),
+                y=self.winfo_y() + self.winfo_height()
+                )
+
             self._lb.bind('<Double-Button-1>', self.selection)
             self._lb.bind('<ButtonRelease-1>', self.mouse_click)
             self._entry.bind('<Return>', self.selection)
@@ -321,7 +371,7 @@ class AutocompleteEntry(tk.Frame):
             if words := self.ac_query():
                 self.show_lb(words)
                 self._lb_name_not_found = False
-            
+
             # hide lb if there are not ac matches
             else:
                 self.show_lb(['Name nicht gefunden!'])
@@ -336,18 +386,19 @@ class AutocompleteEntry(tk.Frame):
             if self._ac_list_refresh and time.time() - self._last_refresh > 5:
                 self._ac_list = self._ac_list_source()
                 self._last_refresh = time.time()
-            
-            # words = [word.strip() for word in self._var.get().split(',')[:-1]]
 
             if not self._lb_name_not_found:
-                
-                # grab the text out of the btd, since its already formated and correct there is for checking
-                # like in older version
+
+                # grab the text out of the btd, since its already formated
+                # and correct there is for checking like in older version
                 word = self._lb.get(tk.ACTIVE)
-                self._blob_text_display.add_blob_text(text=word, font=("Calibri", 16, "bold"))
-                
+                self._blob_text_display.add_blob_text(
+                    text=word,
+                    font=("Calibri", 16, "bold")
+                    )
+
                 # set the search space to empty
-                
+
                 self.hide_lb()
                 self._entry.icursor(tk.END)
 
@@ -362,14 +413,14 @@ class AutocompleteEntry(tk.Frame):
                 else:
 
                     self._var.set('')
-           
+
             else:
-                
+
                 # if there is no matching word in the ac list, then just empty the search box
                 self._var.set('')
                 self.hide_lb()
                 self._entry.icursor(tk.END)
-            
+
     def scroll_up(self, event):
         '''
         manages the scrolling inside the listbox
@@ -377,20 +428,20 @@ class AutocompleteEntry(tk.Frame):
 
         # only scroll if lb is showing
         if self._lb_up:
-            
+
             # if no element inside the lb is selected start at index 1
             if self._lb.curselection() == ():
 
                 index = '1'
 
             else:
-                
+
                 # else start at the current selection
                 index = self._lb.curselection()[0]
 
             # if not already at the top
             if index != '0':
-                
+
                 # scroll up
                 self._lb.selection_clear(first=index)
                 index = str(int(index) - 1)
@@ -399,7 +450,7 @@ class AutocompleteEntry(tk.Frame):
 
                 # make sure the lb scrolls if you reach the top of the screen but not the top of the list
                 self._lb.see(index)
-            
+
     def scroll_down(self, event):
         '''
         downward scrolling of the lb
@@ -414,7 +465,7 @@ class AutocompleteEntry(tk.Frame):
                 index = '-1'
 
             else:
-                
+
                 # use the current selected object as index
                 index = self._lb.curselection()[0]
 
