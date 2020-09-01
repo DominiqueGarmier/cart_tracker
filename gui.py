@@ -119,18 +119,19 @@ class Window:
         self._io_handler._data.pull()
 
         # wrap the cart names in a list of lists
-        entered_carts = [
-            [i] for i in self._io_handler._data._df.get('cart_number').to_list()[1:]  # noqa
-            ]
+        entered_carts = {
+            i: [] for i in self._io_handler._data._df.get('cart_number').to_list()[1:]
+        }
 
         # autocomplete source functions
         def main_autocomplete_source():
             with open('./cart_names.txt') as cart_names:
                 lines = cart_names.read().splitlines()
 
-                _lines = []
+                _lines = {}
                 for line in lines:
-                    _lines.append([s.strip() for s in line.split(',')])
+                    _ = [s.strip() for s in line.split(',')]
+                    _lines[_[0]] = _[1:]
 
                 return _lines
 
@@ -204,9 +205,6 @@ class Window:
         # new carts button
         self._new_carts_button.grid(column=0, row=4, sticky=tk.SE)
 
-        # copyright label
-        self._copyright_label.grid(column=0, row=4, sticky=tk.SW)
-
     def display_correct(self):
         '''
         clear the display and show the gui elements of the "correct" page
@@ -230,9 +228,6 @@ class Window:
 
         # new carts button
         self._new_carts_button.grid(column=0, row=2, sticky=tk.SE)
-
-        # copyright label
-        self._copyright_label.grid(column=0, row=2, sticky=tk.SW)
 
     def clear_display(self):
         '''
