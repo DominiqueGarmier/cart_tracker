@@ -90,12 +90,20 @@ class Window:
 
         # read already entered cart names for autocompletion
         self._io_handler._data.pull()
-        entered_carts = self._io_handler._data._df.get('cart_number').to_list()[1:]
+
+        # wrap the cart names in a list of lists
+        entered_carts = [[i] for i in self._io_handler._data._df.get('cart_number').to_list()[1:]]
 
         # autocomplete source functions
         def main_autocomplete_source():
             with open('./cart_names.txt') as cart_names:
-                return cart_names.read().splitlines()
+                lines = cart_names.read().splitlines()
+
+                _lines = []
+                for line in lines:
+                    _lines.append([s.strip() for s in line.split(',')])
+
+                return _lines
 
         # this could be replaced directly with the list, but will be changed in the future probably
         def correct_autocomplete_source():

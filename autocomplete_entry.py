@@ -77,6 +77,7 @@ class BlobTextDisplay(tk.Frame):
 
         self._root = root
         self._root_width = None
+        self._all_words = []
 
     def add_blob_text(self, text, *args, **kwargs):
         '''
@@ -113,6 +114,9 @@ class BlobTextDisplay(tk.Frame):
         # add the text blob to the others
         self._blobs.append(blob)
         self._rows.append(len(self._frames) - 1)
+        self._root.update()
+
+        self._all_words = self.get_all_words()
 
     def blob_removed(self):
         '''
@@ -127,6 +131,8 @@ class BlobTextDisplay(tk.Frame):
                 self._rows.pop(ind)
 
         self._root.update()
+        self._all_words = self.get_all_words()
+        
 
         # go through each line and check for lines which arent full
         for i, frame in enumerate(self._frames):
@@ -176,6 +182,18 @@ class BlobTextDisplay(tk.Frame):
         
         return s
 
+    def get_all_words(self):
+        '''
+        return a list of all words inside blobs
+        '''
+
+        words = []
+        for blob in self._blobs:
+            if blob._exists:
+                words.append(blob._text)
+
+        return words
+
 class AutocompleteEntry(tk.Frame):
     '''
     new autocomplete entry class, it has a search field where you can search for terms inside of an autocomplete list
@@ -183,7 +201,7 @@ class AutocompleteEntry(tk.Frame):
     is shown as a bubble which can be deleted with a cross next to it
     '''
     
-    def __init__(self, master, ac_list_source, leave_function, lb_length, *args, **kwargs):
+    def __init__(self, master, ac_list_source, leave_function, lb_length, no_clear_if_kw_match=True, *args, **kwargs):
         '''
         initalizes the autocomplete entry and blob text display, aligning everything relative to a Frame
         '''
@@ -239,6 +257,9 @@ class AutocompleteEntry(tk.Frame):
 
         # number of autocompletes shown
         self._lb_length = lb_length
+
+        # clear the search field when a word is searched by exact match
+        self._no_clear_if_kw_match = no_clear_if_kw_match
         
 
     def show_lb(self, words):
@@ -326,9 +347,21 @@ class AutocompleteEntry(tk.Frame):
                 self._blob_text_display.add_blob_text(text=word, font=("Calibri", 16, "bold"))
                 
                 # set the search space to empty
-                self._var.set('')
+                
                 self.hide_lb()
                 self._entry.icursor(tk.END)
+
+                words = self.ac_query(duplicates=True)
+                kw_match = words[word]
+
+                words = self.ac_query()
+                if self._no_clear_if_kw_match and kw_match and words:
+
+                    self.show_lb(words)
+
+                else:
+
+                    self._var.set('')
            
             else:
                 
@@ -403,7 +436,7 @@ class AutocompleteEntry(tk.Frame):
         '''
         self._entry.focus()
 
-    def ac_query(self):
+    def ac_query(self, duplicates=False):
         '''
         queries all the ac list to return a list of possible autocompletes
         '''
@@ -430,7 +463,38 @@ class AutocompleteEntry(tk.Frame):
         
         # parse using regex to find matches
         pattern = re.compile('.*' + last_word + '.*', re.IGNORECASE)
-        return [w for w in self._ac_list if re.match(pattern, w)]
+
+        # checks for any matches inside the key word list and appends the
+        # first element of the keyword list if any kw matches
+        #
+        # return a dict with the key being the word and the value being
+        # a bool saying if the match was triggered by a direct match
+        # or a keyword match
+        matches = {}
+        for w in self._ac_list:
+
+            # dont show words already in blob text
+            if w[0] in self._blob_text_display._all_words and not duplicates:
+                continue
+
+            pattern_match = False
+
+            if re.match(pattern, w[0]):
+                matches[w[0]] = False
+
+            else:
+                
+                for kw in w[1:]:
+                    
+                    if re.match(pattern, kw):
+                        pattern_match = True
+                        break
+
+                if pattern_match:
+                    matches[w[0]] = True
+
+        return matches
+        #return [w[0] for w in self._ac_list if re.match(pattern, w[0])]
 
     def grid_forget(self):
         '''
