@@ -277,7 +277,7 @@ class AutocompleteEntry(tk.Frame):
             self._ac_list = self._ac_list_source()
             self._ac_list_refresh = True
             self._last_refresh = time.time()
-        
+
         else:
             raise TypeError(str(self._ac_list_source) + ' has to be either a list of a callable object that returns a list') # noqa
 

@@ -1,24 +1,21 @@
-#!/usr/bin/env python
+# !/usr/bin/env python
 # -*- coding: utf-8 -*-
-#-------------------------------------------------------
+# ------------------------------------------------------
 # cart tracker (c) 2020 Dominique F. Garmier MIT licence
-#-------------------------------------------------------
+# ------------------------------------------------------
 
 '''
 all gui related classes for cart tracker
 '''
 
 # standard library imports
-import re
-import time
 import os
 import tkinter as tk
-from tkinter import ttk
 from tkinter import messagebox
 
 # local imports
-from classes import IOHandler
 from autocomplete_entry import AutocompleteEntry
+
 
 class Window:
     '''
@@ -30,7 +27,7 @@ class Window:
         initializes all the displayable objects, doesnt display them yet
         and defines all the focus transfer functions
         '''
-        
+
         # define root
         self._root = tk.Tk()
         self._root.title('KSA Wäscheversorgung - Wagen Tracker')
@@ -46,28 +43,58 @@ class Window:
         self._io_handler = io_handler
 
         # define menu buttons
-        self._to_correct = tk.Button(self._root, text='Korrektur', command=self.display_correct, font=self._sfont)
-        self._back_to_main = tk.Button(self._root, text='Zurück', command=self.display_main, font=self._sfont)
-
+        self._to_correct = tk.Button(
+            self._root, text='Korrektur',
+            command=self.display_correct,
+            font=self._sfont
+            )
+        self._back_to_main = tk.Button(
+            self._root, text='Zurück',
+            command=self.display_main,
+            font=self._sfont
+            )
 
         # define labels
-        self._main_label_top = tk.Label(self._root, text='Welche(n) Wagen haben Sie beladen?', font=self._lfont)
-        self._main_label_bottom = tk.Label(self._root, text='Was sind Ihre Initialen?', font=self._lfont)
-        self._correction_label = tk.Label(self._root, text='Welche(r) Wagen soll(en) aus den erledigten entfernt werden?', font=self._lfont)
-
+        self._main_label_top = tk.Label(
+            self._root,
+            text='Welche(n) Wagen haben Sie beladen?',
+            font=self._lfont
+            )
+        self._main_label_bottom = tk.Label(
+            self._root,
+            text='Was sind Ihre Initialen?',
+            font=self._lfont
+            )
+        self._correction_label = tk.Label(
+            self._root,
+            text='Welche(r) Wagen soll(en) aus den erledigten entfernt werden?', # noqa
+            font=self._lfont
+            )
 
         # define regular entries
-        self._signature_textbox_main = tk.Entry(self._root, width=80, font=self._lfont)
-        
+        self._signature_textbox_main = tk.Entry(
+            self._root, width=80, font=self._lfont
+            )
+
         # save buttons
-        self._main_save_button = tk.Button(text='Speichern', command=self.main_button_click, font=self._lfont)
-        self._correct_save_button = tk.Button(text='Speichern', command=self.correct_button_click, font=self._lfont)
-        
-        # register new carts button   
-        self._new_carts_button = tk.Label(self._root, text='Neue Wagennummern registrieren.', font=self._ulfont, cursor="hand2")
- 
-        # copyright button
-        self._copyright_label = tk.Label(self._root) #, text='Copyright (c) Dominique Garmier 2020', font=self._sfont)
+        self._main_save_button = tk.Button(
+            text='Speichern',
+            command=self.main_button_click,
+            font=self._lfont
+            )
+        self._correct_save_button = tk.Button(
+            text='Speichern',
+            command=self.correct_button_click,
+            font=self._lfont
+            )
+
+        # register new carts button
+        self._new_carts_button = tk.Label(
+            self._root,
+            text='Neue Wagennummern registrieren.',
+            font=self._ulfont,
+            cursor="hand2"
+            )
 
         # focus transfer functions and focus relevant functions
         def focus_to_signature_textbox(event):
@@ -78,7 +105,7 @@ class Window:
 
         def focus_to_correct_save_button(event):
             self._correct_save_button.focus_set()
-        
+
         def focus_main_button_click(event):
             self.main_button_click()
 
@@ -92,7 +119,9 @@ class Window:
         self._io_handler._data.pull()
 
         # wrap the cart names in a list of lists
-        entered_carts = [[i] for i in self._io_handler._data._df.get('cart_number').to_list()[1:]]
+        entered_carts = [
+            [i] for i in self._io_handler._data._df.get('cart_number').to_list()[1:]  # noqa
+            ]
 
         # autocomplete source functions
         def main_autocomplete_source():
@@ -105,19 +134,38 @@ class Window:
 
                 return _lines
 
-        # this could be replaced directly with the list, but will be changed in the future probably
+        # this could be replaced directly with the list, but will be
+        # changed in the future probably
         def correct_autocomplete_source():
             return entered_carts
 
         # define autocomplete entries
-        self._autocomplete_textbox_main = AutocompleteEntry(master=self._root, ac_list_source=main_autocomplete_source, leave_function=focus_to_signature_textbox, lb_length=4, width=80, font=self._lfont)
-        self._autocomplete_textbox_correct = AutocompleteEntry(master=self._root, ac_list_source=correct_autocomplete_source, leave_function=focus_to_correct_save_button, lb_length=2, width=80, font=self._lfont)
+        self._autocomplete_textbox_main = AutocompleteEntry(
+            master=self._root,
+            ac_list_source=main_autocomplete_source,
+            leave_function=focus_to_signature_textbox,
+            lb_length=4, width=80, font=self._lfont
+            )
+        self._autocomplete_textbox_correct = AutocompleteEntry(
+            master=self._root,
+            ac_list_source=correct_autocomplete_source,
+            leave_function=focus_to_correct_save_button,
+            lb_length=2, width=80, font=self._lfont
+            )
 
         # bind focus related functions to inputs
-        self._signature_textbox_main.bind('<Return>', focus_to_main_save_button)
-        self._main_save_button.bind('<Return>', focus_main_button_click)
-        self._correct_save_button.bind('<Return>', focus_correct_button_click)
-        self._new_carts_button.bind("<Button-1>", new_carts_button_click)
+        self._signature_textbox_main.bind(
+            '<Return>', focus_to_main_save_button
+            )
+        self._main_save_button.bind(
+            '<Return>', focus_main_button_click
+            )
+        self._correct_save_button.bind(
+            '<Return>', focus_correct_button_click
+            )
+        self._new_carts_button.bind(
+            "<Button-1>", new_carts_button_click
+            )
 
     def main_loop(self):
         '''
@@ -159,7 +207,6 @@ class Window:
         # copyright label
         self._copyright_label.grid(column=0, row=4, sticky=tk.SW)
 
-
     def display_correct(self):
         '''
         clear the display and show the gui elements of the "correct" page
@@ -167,7 +214,7 @@ class Window:
 
         # clear previous page
         self.clear_display()
-        
+
         # menu button
         self._back_to_main.grid(column=0, row=0, sticky=tk.NW)
 
@@ -208,22 +255,31 @@ class Window:
         self._autocomplete_textbox_main.hide_lb()
 
         # grab strings from the entry fields
-        cart_numbers = self._autocomplete_textbox_main._blob_text_display.get_all_text()
+        cart_numbers = self._autocomplete_textbox_main._blob_text_display.get_all_text()  # noqa
         signature = self._signature_textbox_main.get()
 
         # warning messages if entries arent filled properly
         if not cart_numbers and not signature:
-            messagebox.showwarning("Warnung", "Es wurden nicht alle Felder ausgefüllt.")
+            messagebox.showwarning(
+                "Warnung", "Es wurden nicht alle Felder ausgefüllt."
+                )
 
         elif not cart_numbers:
-            messagebox.showwarning("Warnung", "Es wurde keine Wagennummer angegeben.")
-            
+            messagebox.showwarning(
+                "Warnung", "Es wurde keine Wagennummer angegeben."
+                )
+    
         elif not signature:
-            messagebox.showwarning("Warnung", "Es wurden keine Initialen angegeben.")
+            messagebox.showwarning(
+                "Warnung", "Es wurden keine Initialen angegeben."
+                )
 
         # if everything is entered correclty ask for confirmation
         else:
-            answer = messagebox.askokcancel("Frage", "Der/Die Wagen: " + cart_numbers[:-2] + " als erledigt Speichern?")
+            answer = messagebox.askokcancel(
+                "Frage",
+                "Der/Die Wagen: " + cart_numbers[:-2] + " als erledigt Speichern?"  # noqa
+                )
 
             if answer:
 
@@ -238,7 +294,7 @@ class Window:
                 self._io_handler.save_recent_entries()
 
                 self._root.destroy()
-            
+
             else:
                 pass
 
@@ -250,22 +306,30 @@ class Window:
         then it updates the csv by deleting the chosen entries.
         finally it closes the window.
         '''
-        
+
         # remove the listbox if it exists
         self._autocomplete_textbox_correct.hide_lb()
 
         # read the entry and process the string
-        cart_numbers_to_delete_str = self._autocomplete_textbox_correct._blob_text_display.get_all_text()
+        cart_numbers_to_delete_str = self._autocomplete_textbox_correct._blob_text_display.get_all_text()  # noqa
         cart_numbers_to_delete = cart_numbers_to_delete_str.split(',')
-        cart_numbers_to_delete = [number.strip() for number in cart_numbers_to_delete if number.strip()]
+        cart_numbers_to_delete = [
+            number.strip() for number in cart_numbers_to_delete if number.strip()  # noqa
+            ]
 
         # trow warning if nothing was entered
         if not cart_numbers_to_delete_str:
-            messagebox.showwarning("Warnung", "Es wurde keine Wagennummer angegeben.")
+            messagebox.showwarning(
+                "Warnung",
+                "Es wurde keine Wagennummer angegeben."
+                )
 
         # ask for confirmation
         else:
-            answer = messagebox.askokcancel("Frage", "Der/Die Wagen: " + cart_numbers_to_delete_str[:-2] +" aus den erledigten Wagen entfernen?")
+            answer = messagebox.askokcancel(
+                "Frage",
+                "Der/Die Wagen: " + cart_numbers_to_delete_str[:-2] + " aus den erledigten Wagen entfernen?" # noqa
+                )
 
             if answer:
 
@@ -279,10 +343,14 @@ class Window:
                 indices_to_delete = []
                 for cart_number_to_delete in cart_numbers_to_delete:
 
-                    # default entry is '-' this should never be deleted, it keeps excel from crashing
+                    # default entry is '-' this should never be deleted,
+                    # it keeps excel from crashing
                     # if the file is empty otherwise
-                    if cart_number_to_delete != '-' and cart_number_to_delete in cart_numbers:
-                        indices = [i for i, x in enumerate(cart_numbers) if x == cart_number_to_delete]
+                    if (
+                        cart_number_to_delete != '-' and
+                        cart_number_to_delete in cart_numbers
+                            ):
+                        indices = [i for i, x in enumerate(cart_numbers) if x == cart_number_to_delete]  # noqa
                         indices_to_delete += indices
 
                 # remove entries from df
@@ -294,6 +362,6 @@ class Window:
 
                 # close the window
                 self._root.destroy()
-            
+
             else:
                 pass
