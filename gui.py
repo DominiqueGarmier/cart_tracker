@@ -119,11 +119,9 @@ class Window:
         self._io_handler._data.pull()
 
         # wrap the cart names in a list of lists
-        _ = [
-            i for i in self._io_handler._data._df.get('cart_number').to_list()[1:]  # noqa
-            ]
-
-        entered_carts = dict.fromkeys(_)
+        entered_carts = {
+            i: [] for i in self._io_handler._data._df.get('cart_number').to_list()[1:]
+        }
 
         # autocomplete source functions
         def main_autocomplete_source():
