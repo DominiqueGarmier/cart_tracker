@@ -353,7 +353,8 @@ class AutocompleteEntry(tk.Frame):
                     if key_word.lower() not in word.lower():
                         string += ' - ' + key_word
 
-                word += ', ' + string[3:]
+                if string:
+                    word += ', ' + string[3:]
 
             self._lb.insert(tk.END, word)
 
