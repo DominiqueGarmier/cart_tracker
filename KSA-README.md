@@ -47,4 +47,8 @@ Im Unterordner ````Tagesabschluss```` wird jeden Tag einen neuen Ordner erstellt
 
 ## Windows-Task-Scheduler
 
-Damit die data.csv-Datei jeden Tag richtig zurückgesetzt wird, wurde eine Windows-Aufgabe geplant, welche jeden Morgen um 6 Uhr die [daily_task.bat](./daily_task.bat)-Datei ausführt. Diese Datei speichert zuerst die *.xlsx-Datei als *.pdf ab und löscht schliesslich die Einträge in der *.csv-Datei. 
+Damit die data.csv-Datei jeden Tag richtig zurückgesetzt wird, wurde eine Windows-Aufgabe geplant, welche jeden Morgen um 6 Uhr die [daily_task.bat](./daily_task.bat)-Datei ausführt. Diese Datei speichert zuerst die *.xlsx-Datei als *.pdf ab und löscht schliesslich die Einträge in der *.csv-Datei.
+
+## [cart_names.txt](./cart_names.txt)
+
+In der [cart_names.txt](./cart_names.txt) Datei werden alle Wagennummern welche das system erkennen soll gespeichert. Die Datei kann über den link unten recht beim Programm geöffnet werden. In der Datei stellt jede Zeile eine Wagennummer dar, diese muss der Wagennummer in der Excel-Tabelle eins zu eins entsprechen. Die Wagennummer wird gefolg, getrennt mit Kommas, von der Hausnummer sowie der Liftnummer. Diese beiden Nummern sind optional.
