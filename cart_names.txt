@@ -1,72 +1,71 @@
-Station 182
-Station 172
-Station 162 B
-Station 152 (SIC)
-Urologie H1
-Bettenzentrale H1 - 1, H1, Lift A
-Anaesthesie/Lagerungspflege 1
-Station 121
-Station 122
-Station 141
-Station 151
-Station 162 A
-Station 163 (NCW)
-Station 171
-Station 181
-Aufwachraum (AWR)
-Kardiologie
-Ambulatorium
-Station 701/702
-Station 711
-Station 721
-Station 731
-Station 731 ISO-Wagen
-Station 741
-Bettenzentrale H7
-EEG
-Station 411
-Station 421
-Station 431
-Station 441
-Bettenzentrale - H4
-Station 211
-Station 221
-Stomatologie
-Gastro ZUZ
-Station 101 (Notfall)
-Station 111
-Station 112
-Station 812
-Reservewagen H16
-Bettenzentrale H8
-Bettenzentrale H1 - 2
-Anaesthesie/Lagerungspflege 2
-Blutspende
-AEMP
-OP-Garderobe Herren
-OP-Garderobe Damen
-Garderobe LeClou
-Restaurant LeClou
-Kieferchirurgie
-Station 901
-Station 902
-Station 910
-Station 922
-Kinder Roentgen
-Patientenempfang Blusen
-Roentgen (Radiologie)
-Garderobe OP Gyn Kleider
-Garderobe OP Gyn
-Ambulatorium 801
-Fotodecken
-Pathologie
-Strahlentherapie
+Station 182, H1, Lift D
+Station 172, H1, Lift D
+Station 162 B, H1, Lift D
+Station 152 (SIC), H1, Lift D
+Urologie H1, H1, Lift E
+Bettenzentrale H1 - 1, H1, Lift B
+Anaesthesie/Lagerungspflege - 1, H1, Lift B
+Station 121, H1, Lift B
+Station 122, H1, Lift B
+Station 141, H1, Lift B
+Station 151, H1, Lift B
+Station 162 A, H1, Lift B
+Station 163 (NCW), H1, Lift D
+Station 171, H1, Lift B
+Station 181, H1, Lift B
+Aufwachraum (AWR), H1, Lift B
+Kardiologie, H1, Lift B
+Ambulatorium, H7
+Station 701/702, H7
+Station 711, H7
+Station 721, H7
+Station 731, H7
+Station 731 ISO-Wagen, H7
+Station 741, H7
+Bettenzentrale H7, H7
+EEG, H4
+Station 411, H4
+Station 421, H4
+Station 431, H4
+Station 441, H4
+Bettenzentrale H4, H4
+Station 211, H2a
+Station 221, H2a
+Stomatologie, H3
+Gastro ZUZ, H1, Lift A
+Station 101 (Notfall), H1, Lift C
+Station 111, H1, Lift C
+Station 112, H1, Lift C
+Station 812, H8
+Reservewagen H16, H8
+Bettenzentrale H8, H8
+Bettenzentrale H1 - 2, H1, Lift B
+Anaesthesie/Lagerungspflege - 2, H1, Lift B
+Blutspende, H40
+AEMP, H1
+OP-Garderobe Herren, H1, Lift E
+OP-Garderobe Damen, H1, Lift E
+Garderobe LeClou, H10
+Restaurant LeClou, H10
+Kieferchirurgie, H2a
+Station 901/902, H9
+Station 910, H9
+Station 922, H9
+Kinder Roentgen, H9
+Patientenempfang Blusen, H1
+Roentgen (Radiologie), H1, Lift C
+Garderobe OP Gyn Kleider, H8
+Garderobe OP Gyn, H8
+Ambulatorium 801, H8
+Fotodecken, H8
+Pathologie, H19/20
+Strahlentherapie, H25
 Gasterberinnen Garderobe
-Pikettzimmer
+Pikettzimmer, H27
 Urologie ZM
-Angiologie
-Hals-Nasen-Ohren (HNO)
-Station 821
-Station 823
-Station 831
-Geburtenhaus
+Angiologie, H6
+Hals-Nasen-Ohren (HNO), H60
+Station 821, H8
+Station 823, H8
+Station 831, H8
+Geburtenhaus, H44
