@@ -51,7 +51,7 @@ Kieferchirurgie, H2a
 Station 901/902, H9
 Station 910, H9
 Station 922, H9
-Bettezentrale H9, H9
+Bettenzentrale H9, H9
 Patientenempfang Blusen, H1
 Roentgen (Radiologie), H1, Lift C
 Garderobe OP Gyn Kleider, H8
