@@ -340,17 +340,20 @@ class AutocompleteEntry(tk.Frame):
 
         # remove multiples
         words = list(dict.fromkeys(words))
+
+        # put matched words into listbox
         for word in words:
+
+            # append keywords after the word
             if self._show_kw_in_lb and word in key_words and key_words[word]:
                 key_words_ = key_words[word]
 
                 string = ''
                 for key_word in key_words_:
-                    string += ', ' + key_word
+                    if key_word.lower() not in word.lower():
+                        string += ' - ' + key_word
 
-                string = string[2:]
-
-                word += ' (' + string + ')'
+                word += ', ' + string[3:]
 
             self._lb.insert(tk.END, word)
 
@@ -406,7 +409,7 @@ class AutocompleteEntry(tk.Frame):
                 # grab the text out of the btd, since its already formated
                 # and correct there is for checking like in older version
                 word_raw = self._lb.get(tk.ACTIVE)
-                word = word_raw.split('(')[0].strip()
+                word = word_raw.split(',')[0].strip()
 
                 self._blob_text_display.add_blob_text(
                     text=word,

@@ -1,9 +1,9 @@
-Station 182, H1, Lift 1
+Station 182
 Station 172
 Station 162 B
 Station 152 (SIC)
 Urologie H1
-Bettenzentrale H1 - 1
+Bettenzentrale H1 - 1, H1, Lift A
 Anaesthesie/Lagerungspflege 1
 Station 121
 Station 122
